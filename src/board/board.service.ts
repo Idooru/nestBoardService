@@ -8,40 +8,90 @@ import { HttpExceptionFilter } from "../exception/http-exception.filter";
 @UseFilters(HttpExceptionFilter)
 @Injectable()
 export class BoardService {
-  private board: Board[] = [];
+  private boards: Board[] = [];
+
+  private findBoardWithId(id: number): Board {
+    return this.boards.find((board) => board.id === id);
+  }
+
+  private isNotFoundById(board: Board) {
+    if (!board) {
+      throw new HttpException("데이터베이스에 게시물이 없습니다.", 404);
+    }
+  }
 
   createBoard(createBoardDto: CreateBoardDto): Json {
     const { title, description, isOpen } = createBoardDto;
     const board: Board = {
-      id: Date.now().toString(),
+      id: Date.now(),
       title,
       description,
       isOpen,
     };
 
-    this.board.push(board);
+    this.boards.push(board);
 
     return {
       statusCode: 201,
       success: true,
-      message: "Create board",
+      message: "게시물이 생성되었습니다.",
       result: board,
     };
   }
 
-  findAllBoard() {
-    throw new HttpException("sorry mate", 404);
+  findAllBoard(): Json {
+    if (!this.boards.length) {
+      throw new HttpException("데이터베이스에 게시물이 없습니다.", 404);
+    }
+
+    return {
+      statusCode: 200,
+      success: true,
+      message: "전체 게시물을 가져옵니다.",
+      result: this.boards,
+    };
   }
 
-  findOneBoard(id: number) {
-    return `This action returns a #${id} board`;
+  findOneBoard(id: number): Json {
+    const found: Board = this.findBoardWithId(id);
+
+    this.isNotFoundById(found);
+    return {
+      statusCode: 200,
+      success: true,
+      message: `${id}에 해당하는 게시물을 가져옵니다.`,
+      result: found,
+    };
   }
 
-  updateBoard(id: number, updateBoardDto: UpdateBoardDto) {
-    return `This action updates a #${id} board`;
+  updateBoard(id: number, updateBoardDto: UpdateBoardDto): Json {
+    const { title, description, isOpen } = updateBoardDto;
+    const found: Board = this.findBoardWithId(id);
+
+    this.isNotFoundById(found);
+    const idx = this.boards.indexOf(found);
+
+    this.boards[idx].title = title;
+    this.boards[idx].description = description;
+    this.boards[idx].isOpen = isOpen;
+
+    return {
+      statusCode: 201,
+      success: true,
+      message: `${id}에 해당하는 게시물을 수정합니다.`,
+    };
   }
 
   removeBoard(id: number) {
-    return `This action removes a #${id} board`;
+    const found: Board = this.findBoardWithId(id);
+
+    this.isNotFoundById(found);
+    this.boards = this.boards.filter((board) => board !== found);
+
+    return {
+      statusCode: 200,
+      success: true,
+      message: `${id}에 해당하는 게시물을 삭제합니다.`,
+    };
   }
 }
