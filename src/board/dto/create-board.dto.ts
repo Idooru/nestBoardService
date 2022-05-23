@@ -11,5 +11,5 @@ export class CreateBoardDto {
 
   @IsBoolean()
   @IsNotEmpty()
-  isOpen: true;
+  isPublic: true;
 }

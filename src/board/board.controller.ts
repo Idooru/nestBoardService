@@ -6,13 +6,13 @@ import {
   Patch,
   Param,
   Delete,
+  ParseIntPipe,
   UsePipes,
   ValidationPipe,
-  ParseIntPipe,
 } from "@nestjs/common";
 import { BoardService } from "./board.service";
 import { CreateBoardDto } from "./dto/create-board.dto";
-import { UpdateBoardDto } from "./dto/update-board.dto";
+// import { UpdateBoardDto } from "./dto/update-board.dto";
 import { Json } from "./interfaces/json.interface";
 
 @UsePipes(ValidationPipe)
@@ -21,30 +21,30 @@ export class BoardController {
   constructor(private readonly boardService: BoardService) {}
 
   @Post()
-  createBoard(@Body() createBoardDto: CreateBoardDto): Json {
+  createBoard(@Body() createBoardDto: CreateBoardDto): Promise<Json> {
     return this.boardService.createBoard(createBoardDto);
   }
 
   @Get()
-  findAllBoard(): Json {
+  findAllBoard(): Promise<Json> {
     return this.boardService.findAllBoard();
   }
 
-  @Get(":id/id")
-  findOneBoard(@Param("id", ParseIntPipe) id: number): Json {
-    return this.boardService.findOneBoard(id);
-  }
+  // @Get(":id/id")
+  // findOneBoard(@Param("id", ParseIntPipe) id: number): Json {
+  //   return this.boardService.findOneBoard(id);
+  // }
 
-  @Patch(":id/id")
-  updateBoard(
-    @Param("id", ParseIntPipe) id: number,
-    @Body() updateBoardDto: UpdateBoardDto,
-  ): Json {
-    return this.boardService.updateBoard(id, updateBoardDto);
-  }
+  // @Patch(":id/id")
+  // updateBoard(
+  //   @Param("id", ParseIntPipe) id: number,
+  //   @Body() updateBoardDto: UpdateBoardDto,
+  // ): Json {
+  //   return this.boardService.updateBoard(id, updateBoardDto);
+  // }
 
-  @Delete(":id/id")
-  removeBoard(@Param("id", ParseIntPipe) id: number) {
-    return this.boardService.removeBoard(id);
-  }
+  // @Delete(":id/id")
+  // removeBoard(@Param("id", ParseIntPipe) id: number) {
+  //   return this.boardService.removeBoard(id);
+  // }
 }
