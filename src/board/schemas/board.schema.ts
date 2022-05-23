@@ -31,7 +31,7 @@ export class Board extends Document {
   @Prop({
     required: true,
   })
-  isPublic: Boolean;
+  isPublic: boolean;
 }
 
 export const BoardSchema = SchemaFactory.createForClass(Board);

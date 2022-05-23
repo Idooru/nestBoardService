@@ -1,6 +1,6 @@
 import { Injectable, UseFilters, HttpException } from "@nestjs/common";
 import { CreateBoardDto } from "./dto/create-board.dto";
-// import { UpdateBoardDto } from "./dto/update-board.dto";
+import { UpdateBoardDto } from "./dto/update-board.dto";
 import { Json } from "./interfaces/json.interface";
 import { HttpExceptionFilter } from "../common/exception/http-exception.filter";
 import { InjectModel } from "@nestjs/mongoose";
@@ -14,14 +14,22 @@ export class BoardService {
     @InjectModel(Board.name) private readonly boardModel: Model<Board>,
   ) {}
 
-  private async findBoardWithId(id: number): Promise<any> {
-    const result = await this.boardModel.exists({ id });
-    return result;
+  private async findBoardWithId(id: string): Promise<Board> {
+    return await this.boardModel.findById(id);
   }
 
-  private isNotFound(board) {
+  private isNotFoundwithFindOne(board: Board, id: string): void {
     if (!board) {
-      throw new HttpException("데이터베이스에 게시물이 없습니다.", 404);
+      throw new HttpException(
+        `데이터베이스에 id(${id})에 해당하는 게시물이 없습니다.`,
+        404,
+      );
+    }
+  }
+
+  private isNotFoundwithFindAll(boards: Board[]): void {
+    if (!boards.length) {
+      throw new HttpException("데이터베이스에 게시물이 하나도 없습니다.", 404);
     }
   }
 
@@ -42,9 +50,9 @@ export class BoardService {
   }
 
   async findAllBoard(): Promise<Json> {
-    const boards = await this.boardModel.find({});
+    const boards: Board[] = await this.boardModel.find({});
 
-    this.isNotFound(boards);
+    this.isNotFoundwithFindAll(boards);
 
     return {
       statusCode: 200,
@@ -54,28 +62,26 @@ export class BoardService {
     };
   }
 
-  // findOneBoard(id: number): Json {
-  //   const found: Board = this.findBoardWithId(id);
+  async findOneBoard(id: string): Promise<Json> {
+    const board: Board = await this.findBoardWithId(id);
 
-  //   this.isNotFoundById(found);
-  //   return {
-  //     statusCode: 200,
-  //     success: true,
-  //     message: `${id}에 해당하는 게시물을 가져옵니다.`,
-  //     result: found,
-  //   };
-  // }
+    this.isNotFoundwithFindOne(board, id);
 
-  // updateBoard(id: number, updateBoardDto: UpdateBoardDto): Json {
+    return {
+      statusCode: 200,
+      success: true,
+      message: `${id}에 해당하는 게시물을 가져옵니다.`,
+      result: board,
+    };
+  }
+
+  // async updateBoard(id: string, updateBoardDto: UpdateBoardDto): Promise<Json> {
   //   const { title, description, isPublic } = updateBoardDto;
-  //   const found: Board = this.findBoardWithId(id);
+  //   const board: Board = await this.findBoardWithId(id);
 
-  //   this.isNotFoundById(found);
-  //   const idx = this.boards.indexOf(found);
+  //   this.isNotFoundwithFindOne(board, id);
 
-  //   this.boards[idx].title = title;
-  //   this.boards[idx].description = description;
-  //   this.boards[idx].isPublic = isPublic;
+  //   await this.boardModel.update();
 
   //   return {
   //     statusCode: 201,
@@ -84,16 +90,16 @@ export class BoardService {
   //   };
   // }
 
-  // removeBoard(id: number) {
+  // removeBoard(id: string) {
   //   const found: Board = this.findBoardWithId(id);
 
   //   this.isNotFoundById(found);
-  //   this.boards = this.boards.filter((board) => board !== found);
+  //   // this.boards = this.boards.filter((board) => board !== found);
 
   //   return {
   //     statusCode: 200,
   //     success: true,
   //     message: `${id}에 해당하는 게시물을 삭제합니다.`,
   //   };
-  //}
+  // }
 }

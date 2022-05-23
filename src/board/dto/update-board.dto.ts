@@ -1,15 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsString } from "class-validator";
+import { PartialType } from "@nestjs/mapped-types";
+import { CreateBoardDto } from "./create-board.dto";
 
-export class CreateBoardDto {
-  @IsString()
-  @IsNotEmpty()
-  title: string;
-
-  @IsString()
-  @IsNotEmpty()
-  description: string;
-
-  @IsBoolean()
-  @IsNotEmpty()
-  isPublic: true;
-}
+export class UpdateBoardDto extends PartialType(CreateBoardDto) {}

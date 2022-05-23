@@ -6,13 +6,12 @@ import {
   Patch,
   Param,
   Delete,
-  ParseIntPipe,
   UsePipes,
   ValidationPipe,
 } from "@nestjs/common";
 import { BoardService } from "./board.service";
 import { CreateBoardDto } from "./dto/create-board.dto";
-// import { UpdateBoardDto } from "./dto/update-board.dto";
+import { UpdateBoardDto } from "./dto/update-board.dto";
 import { Json } from "./interfaces/json.interface";
 
 @UsePipes(ValidationPipe)
@@ -30,21 +29,21 @@ export class BoardController {
     return this.boardService.findAllBoard();
   }
 
-  // @Get(":id/id")
-  // findOneBoard(@Param("id", ParseIntPipe) id: number): Json {
-  //   return this.boardService.findOneBoard(id);
-  // }
+  @Get(":id/id")
+  findOneBoard(@Param("id") id: string): Promise<Json> {
+    return this.boardService.findOneBoard(id);
+  }
 
   // @Patch(":id/id")
-  // updateBoard(
-  //   @Param("id", ParseIntPipe) id: number,
+  // async updateBoard(
+  //   @Param("id") id: string,
   //   @Body() updateBoardDto: UpdateBoardDto,
-  // ): Json {
-  //   return this.boardService.updateBoard(id, updateBoardDto);
+  // ): Promise<Json> {
+  //   return await this.boardService.updateBoard(id, updateBoardDto);
   // }
 
   // @Delete(":id/id")
-  // removeBoard(@Param("id", ParseIntPipe) id: number) {
+  // removeBoard(@Param("id") id: string) {
   //   return this.boardService.removeBoard(id);
   // }
 }
