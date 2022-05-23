@@ -34,16 +34,16 @@ export class BoardController {
     return this.boardService.findOneBoard(id);
   }
 
-  // @Patch(":id/id")
-  // async updateBoard(
-  //   @Param("id") id: string,
-  //   @Body() updateBoardDto: UpdateBoardDto,
-  // ): Promise<Json> {
-  //   return await this.boardService.updateBoard(id, updateBoardDto);
-  // }
+  @Patch(":id/id")
+  async updateBoard(
+    @Param("id") id: string,
+    @Body() updateBoardDto: UpdateBoardDto,
+  ): Promise<Json> {
+    return await this.boardService.updateBoard(id, updateBoardDto);
+  }
 
-  // @Delete(":id/id")
-  // removeBoard(@Param("id") id: string) {
-  //   return this.boardService.removeBoard(id);
-  // }
+  @Delete(":id/id")
+  removeBoard(@Param("id") id: string) {
+    return this.boardService.removeBoard(id);
+  }
 }

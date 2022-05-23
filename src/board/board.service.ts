@@ -75,31 +75,39 @@ export class BoardService {
     };
   }
 
-  // async updateBoard(id: string, updateBoardDto: UpdateBoardDto): Promise<Json> {
-  //   const { title, description, isPublic } = updateBoardDto;
-  //   const board: Board = await this.findBoardWithId(id);
+  async updateBoard(id: string, updateBoardDto: UpdateBoardDto): Promise<Json> {
+    const { title, description, isPublic } = updateBoardDto;
+    const board: Board = await this.findBoardWithId(id);
 
-  //   this.isNotFoundwithFindOne(board, id);
+    this.isNotFoundwithFindOne(board, id);
+    await this.boardModel.updateOne(
+      {
+        _id: id,
+      },
+      {
+        title,
+        description,
+        isPublic,
+      },
+    );
 
-  //   await this.boardModel.update();
+    return {
+      statusCode: 201,
+      success: true,
+      message: `${id}에 해당하는 게시물을 수정합니다.`,
+    };
+  }
 
-  //   return {
-  //     statusCode: 201,
-  //     success: true,
-  //     message: `${id}에 해당하는 게시물을 수정합니다.`,
-  //   };
-  // }
+  async removeBoard(id: string) {
+    const board: Board = await this.findBoardWithId(id);
 
-  // removeBoard(id: string) {
-  //   const found: Board = this.findBoardWithId(id);
+    this.isNotFoundwithFindOne(board, id);
+    await this.boardModel.deleteOne({ _id: id }, {});
 
-  //   this.isNotFoundById(found);
-  //   // this.boards = this.boards.filter((board) => board !== found);
-
-  //   return {
-  //     statusCode: 200,
-  //     success: true,
-  //     message: `${id}에 해당하는 게시물을 삭제합니다.`,
-  //   };
-  // }
+    return {
+      statusCode: 200,
+      success: true,
+      message: `${id}에 해당하는 게시물을 삭제합니다.`,
+    };
+  }
 }
