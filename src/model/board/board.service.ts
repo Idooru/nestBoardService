@@ -1,8 +1,13 @@
-import { Injectable, UseFilters, HttpException } from "@nestjs/common";
+import {
+  Injectable,
+  UseFilters,
+  NotFoundException,
+  UnauthorizedException,
+} from "@nestjs/common";
 import { CreateBoardDto } from "./dto/create-board.dto";
 import { UpdateBoardDto } from "./dto/update-board.dto";
 import { Json } from "./interfaces/json.interface";
-import { HttpExceptionFilter } from "../common/exception/http-exception.filter";
+import { HttpExceptionFilter } from "../../common/exception/http-exception.filter";
 import { InjectModel } from "@nestjs/mongoose";
 import { Board } from "./schemas/board.schema";
 import { Model } from "mongoose";
@@ -20,21 +25,26 @@ export class BoardService {
 
   private isNotFoundwithFindOne(board: Board, id: string): void {
     if (!board) {
-      throw new HttpException(
+      throw new NotFoundException(
         `데이터베이스에 id(${id})에 해당하는 게시물이 없습니다.`,
-        404,
       );
     }
   }
 
   private isNotFoundwithFindAll(boards: Board[]): void {
     if (!boards.length) {
-      throw new HttpException("데이터베이스에 게시물이 하나도 없습니다.", 404);
+      throw new NotFoundException("데이터베이스에 게시물이 하나도 없습니다.");
     }
   }
 
   async createBoard(createBoardDto: CreateBoardDto): Promise<Json> {
     const { title, description, isPublic } = createBoardDto;
+    const isBoardTitleExist = await this.boardModel.exists({ title });
+
+    if (isBoardTitleExist) {
+      throw new UnauthorizedException("게시물이 이미 존재합니다.");
+    }
+
     const board = await this.boardModel.create({
       title,
       description,

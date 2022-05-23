@@ -22,7 +22,7 @@ export class Board extends Document {
   @IsString()
   @Prop({
     required: true,
-    length: 300,
+    length: 100,
   })
   description: string;
 

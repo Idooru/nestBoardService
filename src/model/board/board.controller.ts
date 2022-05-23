@@ -6,15 +6,12 @@ import {
   Patch,
   Param,
   Delete,
-  UsePipes,
-  ValidationPipe,
 } from "@nestjs/common";
 import { BoardService } from "./board.service";
 import { CreateBoardDto } from "./dto/create-board.dto";
 import { UpdateBoardDto } from "./dto/update-board.dto";
 import { Json } from "./interfaces/json.interface";
 
-@UsePipes(ValidationPipe)
 @Controller("board")
 export class BoardController {
   constructor(private readonly boardService: BoardService) {}

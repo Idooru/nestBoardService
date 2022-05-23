@@ -1,8 +1,9 @@
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
-import { BoardModule } from "./board/board.module";
+import { BoardModule } from "./model/board/board.module";
 import { ConfigModule } from "@nestjs/config";
 import { LoggerMiddleware } from "./common/middlewares/logger.middleware";
 import { MongooseModule } from "@nestjs/mongoose";
+import { UserModule } from "./model/user/user.module";
 import * as mongoose from "mongoose";
 
 @Module({
@@ -15,6 +16,7 @@ import * as mongoose from "mongoose";
       useFindAndModify: false,
     }),
     BoardModule,
+    UserModule,
   ],
   controllers: [],
   providers: [],
