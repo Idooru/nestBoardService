@@ -6,7 +6,7 @@ import {
 } from "@nestjs/common";
 import { CreateBoardDto } from "./dto/create-board.dto";
 import { UpdateBoardDto } from "./dto/update-board.dto";
-import { Json } from "./interfaces/json.interface";
+import { Json } from "../../common/interfaces/json.interface";
 import { HttpExceptionFilter } from "../../common/exception/http-exception.filter";
 import { InjectModel } from "@nestjs/mongoose";
 import { Board } from "./schemas/board.schema";

@@ -10,7 +10,7 @@ import {
 import { BoardService } from "./board.service";
 import { CreateBoardDto } from "./dto/create-board.dto";
 import { UpdateBoardDto } from "./dto/update-board.dto";
-import { Json } from "./interfaces/json.interface";
+import { Json } from "../../common/interfaces/json.interface";
 
 @Controller("board")
 export class BoardController {
