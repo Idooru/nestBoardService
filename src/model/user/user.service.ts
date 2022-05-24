@@ -4,6 +4,7 @@ import { User } from "./schemas/user.schema";
 import { Model } from "mongoose";
 import { RegisterDto } from "./dto/login.dto";
 import { Json } from "../../common/interfaces/json.interface";
+
 import * as bcrypt from "bcrypt";
 
 @Injectable()
