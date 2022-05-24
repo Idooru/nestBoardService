@@ -45,7 +45,7 @@ export class BoardService {
       throw new UnauthorizedException("게시물이 이미 존재합니다.");
     }
 
-    const board = await this.boardModel.create({
+    const board: Board = await this.boardModel.create({
       title,
       description,
       isPublic,
@@ -54,7 +54,7 @@ export class BoardService {
     return {
       statusCode: 201,
       message: "게시물이 생성되었습니다.",
-      result: board,
+      result: board.readOnlyData,
     };
   }
 
@@ -78,7 +78,7 @@ export class BoardService {
     return {
       statusCode: 200,
       message: `${id}에 해당하는 게시물을 가져옵니다.`,
-      result: board,
+      result: board.readOnlyData,
     };
   }
 

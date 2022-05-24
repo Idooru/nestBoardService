@@ -32,6 +32,22 @@ export class Board extends Document {
     required: true,
   })
   isPublic: boolean;
+
+  readonly readOnlyData: {
+    id: string;
+    title: string;
+    description: string;
+    isPublic: boolean;
+  };
 }
 
 export const BoardSchema = SchemaFactory.createForClass(Board);
+
+BoardSchema.virtual("readOnlyData").get(function (this: Board) {
+  return {
+    id: this.id,
+    title: this.title,
+    description: this.description,
+    isPublic: this.isPublic,
+  };
+});
