@@ -1,15 +1,8 @@
-import { IsBoolean, IsNotEmpty, IsString } from "class-validator";
+import { PickType } from "@nestjs/mapped-types";
+import { Board } from "../schemas/board.schema";
 
-export class CreateBoardDto {
-  @IsString()
-  @IsNotEmpty()
-  title: string;
-
-  @IsString()
-  @IsNotEmpty()
-  description: string;
-
-  @IsBoolean()
-  @IsNotEmpty()
-  isPublic: true;
-}
+export class CreateBoardDto extends PickType(Board, [
+  "title",
+  "description",
+  "isPublic",
+] as const) {}

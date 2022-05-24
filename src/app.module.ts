@@ -4,6 +4,8 @@ import { ConfigModule } from "@nestjs/config";
 import { LoggerMiddleware } from "./common/middlewares/logger.middleware";
 import { MongooseModule } from "@nestjs/mongoose";
 import { UserModule } from "./model/user/user.module";
+import { AuthModule } from "./model/auth/auth.module";
+
 import * as mongoose from "mongoose";
 
 @Module({
@@ -17,6 +19,7 @@ import * as mongoose from "mongoose";
     }),
     BoardModule,
     UserModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
