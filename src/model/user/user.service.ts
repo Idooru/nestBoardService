@@ -32,10 +32,9 @@ export class UserService {
     });
 
     return {
-      success: true,
       statusCode: 201,
       message: "회원가입을 완료하였습니다.",
-      result: user,
+      result: user.readOnlyData,
     };
   }
 }

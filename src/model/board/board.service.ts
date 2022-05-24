@@ -53,7 +53,6 @@ export class BoardService {
 
     return {
       statusCode: 201,
-      success: true,
       message: "게시물이 생성되었습니다.",
       result: board,
     };
@@ -66,7 +65,6 @@ export class BoardService {
 
     return {
       statusCode: 200,
-      success: true,
       message: "전체 게시물을 가져옵니다.",
       result: boards,
     };
@@ -79,7 +77,6 @@ export class BoardService {
 
     return {
       statusCode: 200,
-      success: true,
       message: `${id}에 해당하는 게시물을 가져옵니다.`,
       result: board,
     };
@@ -103,7 +100,6 @@ export class BoardService {
 
     return {
       statusCode: 201,
-      success: true,
       message: `${id}에 해당하는 게시물을 수정합니다.`,
     };
   }
@@ -116,7 +112,6 @@ export class BoardService {
 
     return {
       statusCode: 200,
-      success: true,
       message: `${id}에 해당하는 게시물을 삭제합니다.`,
     };
   }

@@ -16,39 +16,22 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const error = exception.getResponse() as
       | string
       | { error: string; message: string; statusCode: number | string[] };
-    typeof error === "string"
-      ? res.status(status).json({
-          statusCode: status,
-          success: false,
-          timestamp: new Date().toString(),
-          path: req.originalUrl,
-          error,
-        })
-      : res.status(status).json({
-          statusCode: status,
-          success: false,
-          timestamp: new Date().toString(),
-          ...error,
-        });
+
+    if (typeof error === "string") {
+      res.status(status).json({
+        success: false,
+        statusCode: status,
+        timestamp: new Date().toString(),
+        path: req.originalUrl,
+        error,
+      });
+    } else {
+      res.status(status).json({
+        success: false,
+        statusCode: status,
+        timestamp: new Date().toString(),
+        ...error,
+      });
+    }
   }
 }
-
-// const error = exception.getResponse() as
-// | string
-// | { statusCode: number; message: string; error: string | string[] };
-
-// typeof error === "string"
-// ? response.status(status).json({
-//     statusCode: status,
-//     success: false,
-//     timestamp: new Date().toISOString(),
-//     path: request.url,
-//     error,
-//   })
-// : response.status(status).json({
-//     statusCode: status,
-//     success: false,
-//     timestamp: new Date().toISOString(),
-//     ...error,
-//   });
-// }
