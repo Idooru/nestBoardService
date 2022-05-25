@@ -1,6 +1,5 @@
 import { Injectable, UseFilters, HttpException } from "@nestjs/common";
-import { CreateBoardDto } from "./dto/create-board.dto";
-import { UpdateBoardDto } from "./dto/update-board.dto";
+import { BoardRequestDto } from "./dto/board-request.dto";
 import { Json } from "../../common/interfaces/json.interface";
 import { HttpExceptionFilter } from "../../common/exception/http-exception.filter";
 import { Board } from "./schemas/board.schema";
@@ -19,10 +18,10 @@ export class BoardService {
     }
   }
 
-  async createBoard(createBoardDto: CreateBoardDto): Promise<Json> {
+  async createBoard(boardRequestDto: BoardRequestDto): Promise<Json> {
     console.time("create board");
 
-    const { title, description, isPublic } = createBoardDto;
+    const { title, description, isPublic } = boardRequestDto;
     const found = await this.boardRepository.existBoardTitle(title);
 
     if (found) {
@@ -77,10 +76,13 @@ export class BoardService {
     };
   }
 
-  async updateBoard(id: string, updateBoardDto: UpdateBoardDto): Promise<Json> {
+  async updateBoard(
+    id: string,
+    boardRequestDto: BoardRequestDto,
+  ): Promise<Json> {
     console.time(`update board by ${id}`);
 
-    const { title, description, isPublic } = updateBoardDto;
+    const { title, description, isPublic } = boardRequestDto;
 
     await this.isExistId(id);
     await this.boardRepository.update(id, { title, description, isPublic });

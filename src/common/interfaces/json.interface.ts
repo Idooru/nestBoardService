@@ -1,5 +1,5 @@
 export interface Json {
   statusCode: number;
   message: string;
-  result?: [] | object;
+  result?: [] | object | string;
 }

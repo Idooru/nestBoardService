@@ -1,23 +1,22 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
-import { InjectModel } from "@nestjs/mongoose";
-import { User } from "./schemas/user.schema";
-import { Model } from "mongoose";
 import { RegisterDto } from "./dto/register.dto";
 import { Json } from "../../common/interfaces/json.interface";
+import { UserRepository } from "./user.repository";
+import { User } from "./schemas/user.schema";
 
 import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectModel(User.name) private readonly userModel: Model<User>,
-  ) {}
+  constructor(private readonly userRepository: UserRepository) {}
 
   async register(registerDto: RegisterDto): Promise<Json> {
     const { email, password, name } = registerDto;
 
-    const isEmailExist: boolean = await this.userModel.exists({ email });
-    const isNameExist: boolean = await this.userModel.exists({ name });
+    const isEmailExist: boolean = await this.userRepository.existUserEmail(
+      email,
+    );
+    const isNameExist: boolean = await this.userRepository.existUserName(name);
 
     if (isEmailExist || isNameExist) {
       throw new BadRequestException("사용자가 이미 존재합니다.");
@@ -25,7 +24,7 @@ export class UserService {
 
     const hashed: string = await bcrypt.hash(password, 10);
 
-    const user = await this.userModel.create({
+    const user: User = await this.userRepository.create({
       email,
       name,
       password: hashed,

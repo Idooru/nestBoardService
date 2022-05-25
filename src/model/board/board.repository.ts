@@ -2,8 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Board } from "./schemas/board.schema";
 import { Model } from "mongoose";
-import { CreateBoardDto } from "./dto/create-board.dto";
-import { UpdateBoardDto } from "./dto/update-board.dto";
+import { BoardRequestDto } from "./dto/board-request.dto";
 
 @Injectable()
 export class BoardRepository {
@@ -27,11 +26,11 @@ export class BoardRepository {
     return await this.boardModel.exists({ title });
   }
 
-  public async create(board: CreateBoardDto): Promise<Board> {
+  public async create(board: BoardRequestDto): Promise<Board> {
     return await this.boardModel.create(board);
   }
 
-  public async update(id: string, board: UpdateBoardDto): Promise<void> {
+  public async update(id: string, board: BoardRequestDto): Promise<void> {
     await this.boardModel.updateOne({ _id: id }, board);
   }
 

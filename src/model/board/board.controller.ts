@@ -8,8 +8,7 @@ import {
   Delete,
 } from "@nestjs/common";
 import { BoardService } from "./board.service";
-import { CreateBoardDto } from "./dto/create-board.dto";
-import { UpdateBoardDto } from "./dto/update-board.dto";
+import { BoardRequestDto } from "./dto/board-request.dto";
 import { Json } from "../../common/interfaces/json.interface";
 
 @Controller("board")
@@ -17,8 +16,8 @@ export class BoardController {
   constructor(private readonly boardService: BoardService) {}
 
   @Post()
-  createBoard(@Body() createBoardDto: CreateBoardDto): Promise<Json> {
-    return this.boardService.createBoard(createBoardDto);
+  createBoard(@Body() boardRequestDto: BoardRequestDto): Promise<Json> {
+    return this.boardService.createBoard(boardRequestDto);
   }
 
   @Get()
@@ -34,9 +33,9 @@ export class BoardController {
   @Patch(":id/id")
   async updateBoard(
     @Param("id") id: string,
-    @Body() updateBoardDto: UpdateBoardDto,
+    @Body() boardRequestDto: BoardRequestDto,
   ): Promise<Json> {
-    return await this.boardService.updateBoard(id, updateBoardDto);
+    return await this.boardService.updateBoard(id, boardRequestDto);
   }
 
   @Delete(":id/id")
