@@ -1,55 +1,41 @@
-import {
-  Injectable,
-  UseFilters,
-  NotFoundException,
-  UnauthorizedException,
-} from "@nestjs/common";
+import { Injectable, UseFilters, HttpException } from "@nestjs/common";
 import { CreateBoardDto } from "./dto/create-board.dto";
 import { UpdateBoardDto } from "./dto/update-board.dto";
 import { Json } from "../../common/interfaces/json.interface";
 import { HttpExceptionFilter } from "../../common/exception/http-exception.filter";
-import { InjectModel } from "@nestjs/mongoose";
 import { Board } from "./schemas/board.schema";
-import { Model } from "mongoose";
+import { BoardRepository } from "./board.repository";
 
 @UseFilters(HttpExceptionFilter)
 @Injectable()
 export class BoardService {
-  constructor(
-    @InjectModel(Board.name) private readonly boardModel: Model<Board>,
-  ) {}
+  constructor(private readonly boardRepository: BoardRepository) {}
 
-  private async findBoardWithId(id: string): Promise<Board> {
-    return await this.boardModel.findById(id);
-  }
+  private async isExistId(id: string) {
+    const found: boolean = await this.boardRepository.existBoardId(id);
 
-  private isNotFoundwithFindOne(board: Board, id: string): void {
-    if (!board) {
-      throw new NotFoundException(
-        `데이터베이스에 id(${id})에 해당하는 게시물이 없습니다.`,
-      );
-    }
-  }
-
-  private isNotFoundwithFindAll(boards: Board[]): void {
-    if (!boards.length) {
-      throw new NotFoundException("데이터베이스에 게시물이 하나도 없습니다.");
+    if (found) {
+      throw new HttpException(`유효하지 않은 ${id}입니다.`, 402);
     }
   }
 
   async createBoard(createBoardDto: CreateBoardDto): Promise<Json> {
-    const { title, description, isPublic } = createBoardDto;
-    const isBoardTitleExist = await this.boardModel.exists({ title });
+    console.time("create board");
 
-    if (isBoardTitleExist) {
-      throw new UnauthorizedException("게시물이 이미 존재합니다.");
+    const { title, description, isPublic } = createBoardDto;
+    const found = await this.boardRepository.existBoardTitle(title);
+
+    if (found) {
+      throw new HttpException("게시물이 이미 존재합니다.", 403);
     }
 
-    const board: Board = await this.boardModel.create({
+    const board: Board = await this.boardRepository.create({
       title,
       description,
       isPublic,
     });
+
+    console.timeEnd("create board");
 
     return {
       statusCode: 201,
@@ -59,60 +45,65 @@ export class BoardService {
   }
 
   async findAllBoard(): Promise<Json> {
-    const boards: Board[] = await this.boardModel.find({});
+    console.time("find all board");
 
-    this.isNotFoundwithFindAll(boards);
+    const boards: Board[] = await this.boardRepository.findBoards();
+
+    if (!boards.length) {
+      throw new HttpException("데이터베이스에 게시물이 하나도 없습니다.", 404);
+    }
+
+    console.timeEnd("find all board");
 
     return {
       statusCode: 200,
-      message: "전체 게시물을 가져옵니다.",
+      message: "전체 게시물을 가져왔습니다.",
       result: boards,
     };
   }
 
   async findOneBoard(id: string): Promise<Json> {
-    const board: Board = await this.findBoardWithId(id);
+    console.time(`find one board by ${id}`);
 
-    this.isNotFoundwithFindOne(board, id);
+    await this.isExistId(id);
+    const board: Board = await this.boardRepository.findBoardWithId(id);
+
+    console.timeEnd(`find one board by ${id}`);
 
     return {
       statusCode: 200,
-      message: `${id}에 해당하는 게시물을 가져옵니다.`,
+      message: `${id}에 해당하는 게시물을 가져왔습니다.`,
       result: board.readOnlyData,
     };
   }
 
   async updateBoard(id: string, updateBoardDto: UpdateBoardDto): Promise<Json> {
-    const { title, description, isPublic } = updateBoardDto;
-    const board: Board = await this.findBoardWithId(id);
+    console.time(`update board by ${id}`);
 
-    this.isNotFoundwithFindOne(board, id);
-    await this.boardModel.updateOne(
-      {
-        _id: id,
-      },
-      {
-        title,
-        description,
-        isPublic,
-      },
-    );
+    const { title, description, isPublic } = updateBoardDto;
+
+    await this.isExistId(id);
+    await this.boardRepository.update(id, { title, description, isPublic });
+
+    console.timeEnd(`update board by ${id}`);
 
     return {
       statusCode: 201,
-      message: `${id}에 해당하는 게시물을 수정합니다.`,
+      message: `${id}에 해당하는 게시물을 수정하였습니다.`,
     };
   }
 
   async removeBoard(id: string) {
-    const board: Board = await this.findBoardWithId(id);
+    console.time(`remove board by ${id}`);
 
-    this.isNotFoundwithFindOne(board, id);
-    await this.boardModel.deleteOne({ _id: id }, {});
+    await this.isExistId(id);
+    await this.boardRepository.delete(id);
+
+    console.timeEnd(`remove board by ${id}`);
 
     return {
       statusCode: 200,
-      message: `${id}에 해당하는 게시물을 삭제합니다.`,
+      message: `${id}에 해당하는 게시물을 삭제하였습니다.`,
     };
   }
 }
