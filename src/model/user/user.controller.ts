@@ -1,10 +1,10 @@
-import { Body, Controller, Post } from "@nestjs/common";
-import { UserService } from "../user/user.service";
+import { Body, Controller, HttpCode, Post } from "@nestjs/common";
+import { UserService } from "./user.service";
+import { AuthService } from "../auth/auth.service";
 import { RegisterDto } from "./dto/register.dto";
 import { LoginDto } from "../auth/dto/login.dto";
-import { AuthService } from "../auth/auth.service";
 
-@Controller("user")
+@Controller("/user")
 export class UserController {
   constructor(
     private readonly userService: UserService,
@@ -12,12 +12,13 @@ export class UserController {
   ) {}
 
   @Post("/register")
-  register(@Body() registerDto: RegisterDto) {
-    return this.userService.register(registerDto);
+  async register(@Body() payload: RegisterDto) {
+    return await this.userService.register(payload);
   }
 
+  @HttpCode(200)
   @Post("/login")
-  login(@Body() loginDto: LoginDto) {
-    return this.authService.login(loginDto);
+  async login(@Body() payload: LoginDto) {
+    return await this.authService.login(payload);
   }
 }

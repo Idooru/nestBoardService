@@ -1,10 +1,10 @@
 import { forwardRef, Module } from "@nestjs/common";
-import { UserController } from "./user.controller";
-import { UserService } from "./user.service";
 import { MongooseModule } from "@nestjs/mongoose";
 import { User, UserSchema } from "./schemas/user.schema";
-import { UserRepository } from "./user.repository";
 import { AuthModule } from "../auth/auth.module";
+import { UserController } from "./user.controller";
+import { UserService } from "./user.service";
+import { UserRepository } from "./user.repository";
 
 @Module({
   imports: [
@@ -13,6 +13,6 @@ import { AuthModule } from "../auth/auth.module";
   ],
   controllers: [UserController],
   providers: [UserService, UserRepository],
-  exports: [UserService, UserRepository],
+  exports: [UserRepository],
 })
 export class UserModule {}

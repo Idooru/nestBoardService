@@ -9,11 +9,11 @@ async function bootstrap() {
   const port = process.env.PORT;
 
   app.useGlobalFilters(new HttpExceptionFilter());
-  app.useGlobalPipes(new ValidationPipe());
   app.useGlobalInterceptors(new JsonSuccessInterceptor());
+  app.useGlobalPipes(new ValidationPipe());
 
-  await app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
-  });
+  await app.listen(port, () =>
+    console.log(`Server is running at http://localhost:${port}`),
+  );
 }
 bootstrap();

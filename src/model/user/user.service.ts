@@ -1,7 +1,7 @@
-import { BadRequestException, Injectable } from "@nestjs/common";
+import { Injectable, HttpException } from "@nestjs/common";
 import { RegisterDto } from "./dto/register.dto";
-import { Json } from "../../common/interfaces/json.interface";
 import { UserRepository } from "./user.repository";
+import { Json } from "src/common/interfaces/json.interface";
 import { User } from "./schemas/user.schema";
 
 import * as bcrypt from "bcrypt";
@@ -10,16 +10,19 @@ import * as bcrypt from "bcrypt";
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async register(registerDto: RegisterDto): Promise<Json> {
-    const { email, password, name } = registerDto;
+  async register(payload: RegisterDto): Promise<Json> {
+    console.time("register");
+
+    const { email, name, password } = payload;
 
     const isEmailExist: boolean = await this.userRepository.existUserEmail(
       email,
     );
+
     const isNameExist: boolean = await this.userRepository.existUserName(name);
 
     if (isEmailExist || isNameExist) {
-      throw new BadRequestException("사용자가 이미 존재합니다.");
+      throw new HttpException("사용자가 이미 존재합니다.", 400);
     }
 
     const hashed: string = await bcrypt.hash(password, 10);
@@ -29,6 +32,8 @@ export class UserService {
       name,
       password: hashed,
     });
+
+    console.timeEnd("register");
 
     return {
       statusCode: 201,
