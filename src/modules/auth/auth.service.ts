@@ -4,7 +4,7 @@ import { JwtService } from "@nestjs/jwt";
 import { LoginDto } from "./dto/login.dto";
 import { Json } from "src/common/interfaces/json.interface";
 import { User } from "../user/schemas/user.schema";
-
+import { JwtStuff } from "./jwt/jwt-stuff.interface";
 import * as bcrypt from "bcrypt";
 
 @Injectable()
@@ -30,7 +30,7 @@ export class AuthService {
       throw new BadRequestException("아이디 혹은 비밀번호가 틀렸습니다.");
     }
 
-    const stuffByJwt = { email, who: user.id };
+    const stuffByJwt: JwtStuff = { email, who: user.id };
     const jwtToken: string = this.jwtService.sign(stuffByJwt);
 
     console.timeEnd("login");

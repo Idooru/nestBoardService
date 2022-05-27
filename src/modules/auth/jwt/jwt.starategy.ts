@@ -1,24 +1,28 @@
-// import { Injectable } from "@nestjs/common";
-// import { PassportStrategy } from "@nestjs/passport";
-// import { ExtractJwt, Strategy } from "passport-jwt";
+import { ExtractJwt, Strategy, VerifiedCallback } from "passport-jwt";
+import { PassportStrategy } from "@nestjs/passport";
+import { UserRepository } from "../../user/user.repository";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { JwtStuff } from "./jwt-stuff.interface";
+import { User } from "src/modules/user/schemas/user.schema";
 
-// @Injectable()
-// export class JwtStrategy extends PassportStrategy(Strategy) {
-//   constructor(private readonly)
-// }
+@Injectable()
+export class JwtStrategy extends PassportStrategy(Strategy) {
+  constructor(private readonly userRepository: UserRepository) {
+    super({
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      secretOrKey: "secret",
+      ignoreExpiration: false,
+    });
+  }
 
-// import { ExtractJwt, Strategy } from "passport-jwt";
-// import { PassportStrategy } from "@nestjs/passport";
-// import { UserRepository } from "../../user/user.repository";
-// import { Injectable } from "@nestjs/common";
+  async validate(payload: JwtStuff, done: VerifiedCallback) {
+    const id: { id: string } = payload.who;
+    const user: User = await this.userRepository.findUserById(id);
 
-// @Injectable()
-// export class JwtStrategy extends PassportStrategy(Strategy) {
-//   constructor(private readonly userRepository: UserRepository) {
-//     super({
-//       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-//       secretOrKey: "secret",
-//       ignoreExpiration: false,
-//     });
-//   }
-// }
+    if (!user) {
+      throw new UnauthorizedException("해당 사용자는 존재하지 않습니다.");
+    }
+
+    return done(null, user);
+  }
+}

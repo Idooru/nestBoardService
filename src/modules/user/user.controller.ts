@@ -27,7 +27,7 @@ export class UserController {
     const jwtToken = loginService.result;
     res
       .status(200)
-      .setHeader("Authorization", "Bearer" + jwtToken)
+      .setHeader("Authorization", "Bearer " + jwtToken)
       .json(loginService);
   }
 }
