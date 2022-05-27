@@ -6,13 +6,12 @@ import {
   Patch,
   Param,
   Delete,
-  Req,
   Res,
   UseGuards,
 } from "@nestjs/common";
 import { BoardService } from "./board.service";
 import { BoardRequestDto } from "./dto/board-request.dto";
-import { Request, Response } from "express";
+import { Response } from "express";
 import { JwtGuard } from "../auth/jwt/jwt.guard";
 
 @Controller("board")
@@ -23,7 +22,6 @@ export class BoardController {
   @Post()
   async createBoard(
     @Body() payload: BoardRequestDto,
-    @Req() req: Request,
     @Res() res: Response,
   ): Promise<void> {
     res.status(201).json(await this.boardService.createBoard(payload));

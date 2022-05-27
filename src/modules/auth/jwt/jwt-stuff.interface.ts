@@ -1,4 +1,4 @@
 export interface JwtStuff {
   email: string;
-  who: { id: string };
+  who: { id: string; name: string };
 }

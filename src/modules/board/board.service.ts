@@ -3,7 +3,6 @@ import {
   BadRequestException,
   ForbiddenException,
   NotFoundException,
-  HttpException,
 } from "@nestjs/common";
 import { BoardRequestDto } from "./dto/board-request.dto";
 import { Json } from "../../common/interfaces/json.interface";
@@ -25,7 +24,7 @@ export class BoardService {
   async createBoard(payload: BoardRequestDto): Promise<Json> {
     console.time("create board");
 
-    const { title, description, isPublic } = payload;
+    const { title, writer, description, isPublic } = payload;
     const found = await this.boardRepository.existBoardTitle(title);
 
     if (found) {
@@ -34,6 +33,7 @@ export class BoardService {
 
     const board: Board = await this.boardRepository.create({
       title,
+      writer,
       description,
       isPublic,
     });
@@ -83,10 +83,15 @@ export class BoardService {
   async updateBoard(id: string, payload: BoardRequestDto): Promise<Json> {
     console.time(`update board by ${id}`);
 
-    const { title, description, isPublic } = payload;
+    const { title, writer, description, isPublic } = payload;
 
     await this.isExistId(id);
-    await this.boardRepository.update(id, { title, description, isPublic });
+    await this.boardRepository.update(id, {
+      title,
+      writer,
+      description,
+      isPublic,
+    });
 
     console.timeEnd(`update board by ${id}`);
 

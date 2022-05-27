@@ -22,6 +22,14 @@ export class Board extends Document {
   @IsString()
   @Prop({
     required: true,
+    unique: true,
+  })
+  writer: string;
+
+  @IsNotEmpty()
+  @IsString()
+  @Prop({
+    required: true,
     length: 100,
   })
   description: string;
@@ -36,6 +44,7 @@ export class Board extends Document {
   readonly readOnlyData: {
     id: string;
     title: string;
+    writer: string;
     description: string;
     isPublic: boolean;
   };
@@ -47,6 +56,7 @@ BoardSchema.virtual("readOnlyData").get(function (this: Board) {
   return {
     id: this.id,
     title: this.title,
+    writer: this.writer,
     description: this.description,
     isPublic: this.isPublic,
   };

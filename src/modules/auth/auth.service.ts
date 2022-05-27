@@ -30,7 +30,10 @@ export class AuthService {
       throw new BadRequestException("아이디 혹은 비밀번호가 틀렸습니다.");
     }
 
-    const stuffByJwt: JwtStuff = { email, who: user.id };
+    const stuffByJwt: JwtStuff = {
+      email,
+      who: { id: user.id, name: user.name },
+    };
     const jwtToken: string = this.jwtService.sign(stuffByJwt);
 
     console.timeEnd("login");

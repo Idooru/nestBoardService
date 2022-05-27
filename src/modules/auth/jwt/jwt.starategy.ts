@@ -5,18 +5,20 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtStuff } from "./jwt-stuff.interface";
 import { User } from "src/modules/user/schemas/user.schema";
 
+console.log(process.env.JWT_SECRET, "1 on jwt");
+
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly userRepository: UserRepository) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: "secret",
+      secretOrKey: process.env.JWT_SECRET,
       ignoreExpiration: false,
     });
   }
 
   async validate(payload: JwtStuff, done: VerifiedCallback) {
-    const id: { id: string } = payload.who;
+    const id = payload.who.id;
     const user: User = await this.userRepository.findUserById(id);
 
     if (!user) {
@@ -26,3 +28,4 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     return done(null, user);
   }
 }
+console.log(process.env.JWT_SECRET, "2 on jwt");

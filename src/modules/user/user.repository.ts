@@ -26,7 +26,7 @@ export class UserRepository {
     return await this.userModel.findOne({ email });
   }
 
-  async findUserById(id: { id: string }): Promise<User> {
-    return await this.userModel.findOne({ id });
+  async findUserById(id: string): Promise<User> {
+    return await this.userModel.findById(id);
   }
 }
