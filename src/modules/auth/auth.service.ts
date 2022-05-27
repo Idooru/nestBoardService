@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { UserRepository } from "../user/user.repository";
 import { JwtService } from "@nestjs/jwt";
 import { LoginDto } from "./dto/login.dto";
@@ -21,13 +21,13 @@ export class AuthService {
     const user: User = await this.userRepository.findUserByEmail(email);
 
     if (!user) {
-      throw new HttpException("아이디 혹은 비밀번호가 틀렸습니다.", 400);
+      throw new BadRequestException("아이디 혹은 비밀번호가 틀렸습니다.");
     }
 
     const compared: boolean = await bcrypt.compare(password, user.password);
 
     if (!compared) {
-      throw new HttpException("아이디 혹은 비밀번호가 틀렸습니다.", 400);
+      throw new BadRequestException("아이디 혹은 비밀번호가 틀렸습니다.");
     }
 
     const stuffByJwt = { email, who: user.id };

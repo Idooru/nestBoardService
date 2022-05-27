@@ -1,31 +1,35 @@
-import { Injectable, UseFilters, HttpException } from "@nestjs/common";
+import {
+  Injectable,
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+  HttpException,
+} from "@nestjs/common";
 import { BoardRequestDto } from "./dto/board-request.dto";
 import { Json } from "../../common/interfaces/json.interface";
-import { HttpExceptionFilter } from "../../common/exception/http-exception.filter";
 import { Board } from "./schemas/board.schema";
 import { BoardRepository } from "./board.repository";
 
-@UseFilters(HttpExceptionFilter)
 @Injectable()
 export class BoardService {
   constructor(private readonly boardRepository: BoardRepository) {}
 
-  private async isExistId(id: string) {
+  private async isExistId(id: string): Promise<void> {
     const found: boolean = await this.boardRepository.existBoardId(id);
 
-    if (found) {
-      throw new HttpException(`유효하지 않은 ${id}입니다.`, 402);
+    if (!found) {
+      throw new BadRequestException(`유효하지 않은 id입니다. id: {${id}}`);
     }
   }
 
-  async createBoard(boardRequestDto: BoardRequestDto): Promise<Json> {
+  async createBoard(payload: BoardRequestDto): Promise<Json> {
     console.time("create board");
 
-    const { title, description, isPublic } = boardRequestDto;
+    const { title, description, isPublic } = payload;
     const found = await this.boardRepository.existBoardTitle(title);
 
     if (found) {
-      throw new HttpException("게시물이 이미 존재합니다.", 403);
+      throw new ForbiddenException("게시물이 이미 존재합니다.");
     }
 
     const board: Board = await this.boardRepository.create({
@@ -49,7 +53,7 @@ export class BoardService {
     const boards: Board[] = await this.boardRepository.findBoards();
 
     if (!boards.length) {
-      throw new HttpException("데이터베이스에 게시물이 하나도 없습니다.", 404);
+      throw new NotFoundException("데이터베이스에 게시물이 하나도 없습니다.");
     }
 
     console.timeEnd("find all board");
@@ -76,13 +80,10 @@ export class BoardService {
     };
   }
 
-  async updateBoard(
-    id: string,
-    boardRequestDto: BoardRequestDto,
-  ): Promise<Json> {
+  async updateBoard(id: string, payload: BoardRequestDto): Promise<Json> {
     console.time(`update board by ${id}`);
 
-    const { title, description, isPublic } = boardRequestDto;
+    const { title, description, isPublic } = payload;
 
     await this.isExistId(id);
     await this.boardRepository.update(id, { title, description, isPublic });
@@ -95,7 +96,7 @@ export class BoardService {
     };
   }
 
-  async removeBoard(id: string) {
+  async removeBoard(id: string): Promise<Json> {
     console.time(`remove board by ${id}`);
 
     await this.isExistId(id);

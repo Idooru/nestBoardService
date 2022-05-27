@@ -1,10 +1,10 @@
 import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
-import { BoardModule } from "./model/board/board.module";
+import { BoardModule } from "./modules/board/board.module";
 import { ConfigModule } from "@nestjs/config";
 import { LoggerMiddleware } from "./common/middlewares/logger.middleware";
 import { MongooseModule } from "@nestjs/mongoose";
-import { UserModule } from "./model/user/user.module";
-import { AuthModule } from "./model/auth/auth.module";
+import { UserModule } from "./modules/user/user.module";
+import { AuthModule } from "./modules/auth/auth.module";
 
 import * as mongoose from "mongoose";
 

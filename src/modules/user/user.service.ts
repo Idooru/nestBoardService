@@ -1,4 +1,4 @@
-import { Injectable, HttpException } from "@nestjs/common";
+import { Injectable, ForbiddenException } from "@nestjs/common";
 import { RegisterDto } from "./dto/register.dto";
 import { UserRepository } from "./user.repository";
 import { Json } from "src/common/interfaces/json.interface";
@@ -22,7 +22,7 @@ export class UserService {
     const isNameExist: boolean = await this.userRepository.existUserName(name);
 
     if (isEmailExist || isNameExist) {
-      throw new HttpException("사용자가 이미 존재합니다.", 400);
+      throw new ForbiddenException("사용자가 이미 존재합니다.");
     }
 
     const hashed: string = await bcrypt.hash(password, 10);

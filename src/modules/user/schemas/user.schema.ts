@@ -11,7 +11,7 @@ const option: SchemaOptions = {
 export class User extends Document {
   @IsNotEmpty()
   @IsEmail()
-  @MaxLength(20)
+  @MaxLength(64)
   @Prop({
     required: true,
     unique: true,
