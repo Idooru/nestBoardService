@@ -1,12 +1,13 @@
-import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
-import { BoardModule } from "./modules/board/board.module";
-import { ConfigModule } from "@nestjs/config";
+import { MiddlewareConsumer, Module } from "@nestjs/common";
+import { NestModule } from "@nestjs/common";
 import { LoggerMiddleware } from "./common/middlewares/logger.middleware";
-import { MongooseModule } from "@nestjs/mongoose";
-import { UserModule } from "./modules/user/user.module";
 import { AuthModule } from "./modules/auth/auth.module";
+import { BoardModule } from "./modules/board/board.module";
+import { UserModule } from "./modules/user/user.module";
+import { ConfigModule } from "@nestjs/config";
 
 import * as mongoose from "mongoose";
+import { MongooseModule } from "@nestjs/mongoose";
 
 @Module({
   imports: [
@@ -17,15 +18,13 @@ import * as mongoose from "mongoose";
       useCreateIndex: true,
       useFindAndModify: false,
     }),
+    AuthModule,
     BoardModule,
     UserModule,
-    AuthModule,
   ],
-  controllers: [],
-  providers: [],
 })
 export class AppModule implements NestModule {
-  private readonly isDev: boolean = process.env.MODE === "dev" ? true : false;
+  private isDev: boolean = process.env.Mode === "dev" ? true : false;
 
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(LoggerMiddleware).forRoutes("*");
