@@ -21,8 +21,10 @@ export class UserService {
 
     const isNameExist: boolean = await this.userRepository.existUserName(name);
 
-    if (isEmailExist || isNameExist) {
-      throw new ForbiddenException("사용자가 이미 존재합니다.");
+    if (isEmailExist) {
+      throw new ForbiddenException(`해당 이메일은 사용중입니다. ${email}`);
+    } else if (isNameExist) {
+      throw new ForbiddenException(`해당 이름은 사용중입니다. ${name}`);
     }
 
     const hashed: string = await bcrypt.hash(password, 10);

@@ -1,16 +1,16 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { IsEmail, IsNotEmpty, IsString, MaxLength } from "class-validator";
-import { Document, SchemaOptions } from "mongoose";
+import { Prop, Schema, SchemaFactory, SchemaOptions } from "@nestjs/mongoose";
+import { IsNotEmpty, IsString, MaxLength } from "class-validator";
+import { Document } from "mongoose";
 
 const option: SchemaOptions = {
-  autoIndex: true,
   timestamps: true,
+  versionKey: false,
 };
 
 @Schema(option)
 export class User extends Document {
   @IsNotEmpty()
-  @IsEmail()
+  @IsString()
   @MaxLength(64)
   @Prop({
     required: true,
@@ -20,21 +20,25 @@ export class User extends Document {
 
   @IsNotEmpty()
   @IsString()
-  @Prop({
-    required: true,
-  })
-  password: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @MaxLength(13)
+  @MaxLength(15)
   @Prop({
     required: true,
     unique: true,
   })
   name: string;
 
-  readonly readOnlyData: { id: string; email: string; name: string };
+  @IsNotEmpty()
+  @IsString()
+  @Prop({
+    required: true,
+  })
+  password: string;
+
+  readonly readOnlyData: {
+    id: string;
+    email: string;
+    name: string;
+  };
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

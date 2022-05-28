@@ -6,8 +6,6 @@ import { UserModule } from "../user/user.module";
 import { JwtStrategy } from "./jwt/jwt.starategy";
 import { ConfigModule } from "@nestjs/config";
 
-console.log(process.env.JWT_SECRET, "1 on auth");
-
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -22,5 +20,3 @@ console.log(process.env.JWT_SECRET, "1 on auth");
   exports: [AuthService],
 })
 export class AuthModule {}
-
-console.log(process.env.JWT_SECRET, "2 on auth");

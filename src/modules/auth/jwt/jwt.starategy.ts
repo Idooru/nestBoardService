@@ -5,8 +5,6 @@ import { Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtStuff } from "./jwt-stuff.interface";
 import { User } from "src/modules/user/schemas/user.schema";
 
-console.log(process.env.JWT_SECRET, "1 on jwt");
-
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly userRepository: UserRepository) {
@@ -28,4 +26,3 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     return done(null, user);
   }
 }
-console.log(process.env.JWT_SECRET, "2 on jwt");
