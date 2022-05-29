@@ -4,7 +4,8 @@ import { JwtService } from "@nestjs/jwt";
 import { LoginDto } from "./dto/login.dto";
 import { Json } from "src/lib/interfaces/json.interface";
 import { User } from "../user/schemas/user.schema";
-import { JwtStuff } from "./jwt/jwt-stuff.interface";
+import { JwtPayload } from "./jwt/jwt-payload.interface";
+
 import * as bcrypt from "bcrypt";
 
 @Injectable()
@@ -30,12 +31,12 @@ export class AuthService {
       throw new BadRequestException("아이디 혹은 비밀번호가 틀렸습니다.");
     }
 
-    const stuffByJwt: JwtStuff = {
+    const dataToBeJwt: JwtPayload = {
       email,
       who: { id: user.id, name: user.name },
     };
 
-    const jwtToken: string = this.jwtService.sign(stuffByJwt);
+    const jwtToken: string = this.jwtService.sign(dataToBeJwt);
 
     console.timeEnd("login");
 
@@ -46,11 +47,11 @@ export class AuthService {
     };
   }
 
-  async whoAmI(user: JwtStuff) {
+  async whoAmI(decryptedToken: JwtPayload): Promise<Json> {
     console.time("whoAmI");
 
-    const id: string = user.who.id;
-    const me = await this.userRepository.findUserById(id);
+    const id: string = decryptedToken.who.id;
+    const me: User = await this.userRepository.findUserById(id);
 
     console.timeEnd("whoAmI");
 
@@ -58,6 +59,27 @@ export class AuthService {
       statusCode: 200,
       message: "본인 정보를 가져옵니다.",
       result: me.readOnlyData,
+    };
+  }
+
+  async refreshToken(decryptedToken: JwtPayload): Promise<Json> {
+    console.time("refreshToken");
+
+    const id: string = decryptedToken.who.id;
+    const user: User = await this.userRepository.findUserById(id);
+
+    const email = user.email;
+    const name = user.name;
+
+    const dataToBeToken: JwtPayload = { email, who: { id, name } };
+    const jwtToken: string = this.jwtService.sign(dataToBeToken);
+
+    console.timeEnd("refreshToken");
+
+    return {
+      statusCode: 200,
+      message: "토큰을 재발급합니다.",
+      result: jwtToken,
     };
   }
 }

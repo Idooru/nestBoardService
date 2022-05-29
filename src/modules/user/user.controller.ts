@@ -8,7 +8,7 @@ import { RegisterDto } from "./dto/register.dto";
 import { UserService } from "./user.service";
 import { IsloginGuard } from "../auth/jwt/islogin.guard";
 import { GetDecoded } from "src/lib/decorators/user.decorator";
-import { JwtStuff } from "../auth/jwt/jwt-stuff.interface";
+import { JwtPayload } from "../auth/jwt/jwt-payload.interface";
 
 @Controller("/user")
 export class UserController {
@@ -35,16 +35,31 @@ export class UserController {
 
     return res
       .setHeader("Authorization", "" + jwtToken)
-      .status(200)
+      .status(201)
       .json(json);
   }
 
   @UseGuards(IsloginGuard)
   @Get("/whoami")
   async whoAmI(
-    @GetDecoded() user: JwtStuff,
+    @GetDecoded() user: JwtPayload,
     @Res() res: Response,
   ): Promise<ServerResponse> {
     return res.status(200).json(await this.authService.whoAmI(user));
+  }
+
+  @UseGuards(IsloginGuard)
+  @Get("/refreshToken")
+  async refreshToken(
+    @GetDecoded() user: JwtPayload,
+    @Res() res: Response,
+  ): Promise<ServerResponse> {
+    const json: Json = await this.authService.refreshToken(user);
+    const jwtToken = json.result;
+
+    return res
+      .status(200)
+      .setHeader("Authorization", "" + jwtToken)
+      .json(json);
   }
 }
