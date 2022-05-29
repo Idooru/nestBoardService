@@ -6,9 +6,7 @@ import { BoardRequestDto } from "./dto/board-request.dto";
 
 @Injectable()
 export class BoardRepository {
-  constructor(
-    @InjectModel("Board") private readonly boardModel: Model<Board>,
-  ) {}
+  constructor(@InjectModel("Board") readonly boardModel: Model<Board>) {}
 
   public async findBoardWithId(id: string): Promise<Board> {
     return await this.boardModel.findById(id);

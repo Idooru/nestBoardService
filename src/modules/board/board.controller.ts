@@ -12,14 +12,14 @@ import {
 import { BoardService } from "./board.service";
 import { BoardRequestDto } from "./dto/board-request.dto";
 import { Response } from "express";
-import { JwtGuard } from "../auth/jwt/jwt.guard";
 import { ServerResponse } from "http";
+import { IsloginGuard } from "../auth/jwt/islogin.guard";
 
 @Controller("board")
 export class BoardController {
   constructor(private readonly boardService: BoardService) {}
 
-  @UseGuards(JwtGuard)
+  @UseGuards(IsloginGuard)
   @Post()
   async createBoard(
     @Body() payload: BoardRequestDto,
@@ -41,7 +41,7 @@ export class BoardController {
     return res.status(200).json(await this.boardService.findOneBoard(id));
   }
 
-  @UseGuards(JwtGuard)
+  @UseGuards(IsloginGuard)
   @Patch(":id/id")
   async updateBoard(
     @Param("id") id: string,
@@ -53,7 +53,7 @@ export class BoardController {
       .json(await this.boardService.updateBoard(id, payload));
   }
 
-  @UseGuards(JwtGuard)
+  @UseGuards(IsloginGuard)
   @Delete(":id/id")
   async removeBoard(@Param("id") id: string, @Res() res: Response) {
     return res.status(200).json(await this.boardService.removeBoard(id));

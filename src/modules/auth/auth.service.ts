@@ -34,6 +34,7 @@ export class AuthService {
       email,
       who: { id: user.id, name: user.name },
     };
+
     const jwtToken: string = this.jwtService.sign(stuffByJwt);
 
     console.timeEnd("login");
@@ -43,5 +44,9 @@ export class AuthService {
       message: "로그인에 성공하였습니다.",
       result: jwtToken,
     };
+  }
+
+  whoAmI() {
+    return "I'm Idooru";
   }
 }

@@ -11,7 +11,9 @@ import { BoardRepository } from "./board.repository";
 
 @Injectable()
 export class BoardService {
-  constructor(private readonly boardRepository: BoardRepository) {}
+  constructor(private readonly boardRepository: BoardRepository) {
+    this.boardRepository = boardRepository;
+  }
 
   private async isExistId(id: string): Promise<void> {
     const found: boolean = await this.boardRepository.existBoardId(id);
@@ -23,7 +25,7 @@ export class BoardService {
 
   async createBoard(payload: BoardRequestDto): Promise<Json> {
     console.time("create board");
-
+    parseInt("asd");
     const { title, writer, description, isPublic } = payload;
     const found = await this.boardRepository.existBoardTitle(title);
 
