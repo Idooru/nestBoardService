@@ -1,5 +1,13 @@
-import { Controller, Post, Body, Res, Get, UseGuards } from "@nestjs/common";
-import { Response } from "express";
+import {
+  Controller,
+  Post,
+  Body,
+  Res,
+  Get,
+  UseGuards,
+  Req,
+} from "@nestjs/common";
+import { Request, Response } from "express";
 import { ServerResponse } from "http";
 import { Json } from "src/lib/interfaces/json.interface";
 import { AuthService } from "../auth/auth.service";
@@ -34,8 +42,8 @@ export class UserController {
     const jwtToken = json.result;
 
     return res
-      .setHeader("Authorization", "" + jwtToken)
-      .status(201)
+      .status(200)
+      .cookie("JWT_COOKIE", jwtToken, { httpOnly: true })
       .json(json);
   }
 
@@ -59,7 +67,19 @@ export class UserController {
 
     return res
       .status(200)
-      .setHeader("Authorization", "" + jwtToken)
+      .cookie("JWT_COOKIE", jwtToken, {
+        httpOnly: true,
+      })
       .json(json);
+  }
+
+  @UseGuards(IsloginGuard)
+  @Get("/logout")
+  logout(@Req() req: Request, @Res() res: Response) {
+    const json: Json = {
+      statusCode: 200,
+      message: "로그아웃을 완료했습니다.",
+    };
+    return res.cookie("JWT_COOKIE", "").json(json);
   }
 }

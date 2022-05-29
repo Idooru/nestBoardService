@@ -16,13 +16,13 @@ export class IsloginGuard implements CanActivate {
 
   public canActivate(context: ExecutionContext): boolean {
     const req = context.switchToHttp().getRequest();
-    const { authorization } = req.headers;
+    const { JWT_COOKIE } = req.cookies;
 
-    if (!authorization) {
+    if (!JWT_COOKIE) {
       throw new UnauthorizedException("토큰이 없으므로 로그인 할 수 없습니다.");
     }
 
-    req.user = this.validateToken(authorization);
+    req.user = this.validateToken(JWT_COOKIE);
 
     return true;
   }
