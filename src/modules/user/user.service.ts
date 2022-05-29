@@ -1,7 +1,7 @@
 import { Injectable, ForbiddenException } from "@nestjs/common";
 import { RegisterDto } from "./dto/register.dto";
 import { UserRepository } from "./user.repository";
-import { Json } from "src/common/interfaces/json.interface";
+import { Json } from "src/lib/interfaces/json.interface";
 import { User } from "./schemas/user.schema";
 
 import * as bcrypt from "bcrypt";

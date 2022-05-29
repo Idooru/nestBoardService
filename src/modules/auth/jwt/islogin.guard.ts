@@ -14,7 +14,7 @@ export class IsloginGuard implements CanActivate {
 
   private jwtService = new JwtService(this.options);
 
-  public canActivate(context: ExecutionContext): any {
+  public canActivate(context: ExecutionContext): boolean {
     const req = context.switchToHttp().getRequest();
     const { authorization } = req.headers;
 

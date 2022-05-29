@@ -2,7 +2,7 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { UserRepository } from "../user/user.repository";
 import { JwtService } from "@nestjs/jwt";
 import { LoginDto } from "./dto/login.dto";
-import { Json } from "src/common/interfaces/json.interface";
+import { Json } from "src/lib/interfaces/json.interface";
 import { User } from "../user/schemas/user.schema";
 import { JwtStuff } from "./jwt/jwt-stuff.interface";
 import * as bcrypt from "bcrypt";
@@ -46,7 +46,18 @@ export class AuthService {
     };
   }
 
-  whoAmI() {
-    return "I'm Idooru";
+  async whoAmI(user: JwtStuff) {
+    console.time("whoAmI");
+
+    const id: string = user.who.id;
+    const me = await this.userRepository.findUserById(id);
+
+    console.timeEnd("whoAmI");
+
+    return {
+      statusCode: 200,
+      message: "본인 정보를 가져옵니다.",
+      result: me.readOnlyData,
+    };
   }
 }

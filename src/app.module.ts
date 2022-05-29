@@ -5,7 +5,7 @@ import { BoardModule } from "./modules/board/board.module";
 import { UserModule } from "./modules/user/user.module";
 import { ConfigModule } from "@nestjs/config";
 import { MongooseModule } from "@nestjs/mongoose";
-import { LoggerMiddleware } from "./common/middlewares/logger.middleware";
+import { LoggerMiddleware } from "./lib/middlewares/logger.middleware";
 
 import * as mongoose from "mongoose";
 

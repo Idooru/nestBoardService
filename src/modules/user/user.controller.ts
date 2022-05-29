@@ -1,11 +1,14 @@
-import { Controller, Post, Body, Res } from "@nestjs/common";
+import { Controller, Post, Body, Res, Get, UseGuards } from "@nestjs/common";
 import { Response } from "express";
 import { ServerResponse } from "http";
-import { Json } from "src/common/interfaces/json.interface";
+import { Json } from "src/lib/interfaces/json.interface";
 import { AuthService } from "../auth/auth.service";
 import { LoginDto } from "../auth/dto/login.dto";
 import { RegisterDto } from "./dto/register.dto";
 import { UserService } from "./user.service";
+import { IsloginGuard } from "../auth/jwt/islogin.guard";
+import { GetDecoded } from "src/lib/decorators/user.decorator";
+import { JwtStuff } from "../auth/jwt/jwt-stuff.interface";
 
 @Controller("/user")
 export class UserController {
@@ -34,5 +37,14 @@ export class UserController {
       .setHeader("Authorization", "" + jwtToken)
       .status(200)
       .json(json);
+  }
+
+  @UseGuards(IsloginGuard)
+  @Get("/whoami")
+  async whoAmI(
+    @GetDecoded() user: JwtStuff,
+    @Res() res: Response,
+  ): Promise<ServerResponse> {
+    return res.status(200).json(await this.authService.whoAmI(user));
   }
 }

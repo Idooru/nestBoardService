@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { BoardRequestDto } from "./dto/board-request.dto";
-import { Json } from "../../common/interfaces/json.interface";
+import { Json } from "../../lib/interfaces/json.interface";
 import { Board } from "./schemas/board.schema";
 import { BoardRepository } from "./board.repository";
 
