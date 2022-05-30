@@ -8,31 +8,35 @@ import { BoardCreateUpdateDto } from "./dto/board-create-update.dto";
 export class BoardRepository {
   constructor(@InjectModel("Board") readonly boardModel: Model<Board>) {}
 
-  public async findBoardWithId(id: string): Promise<Board> {
+  async findBoardWithId(id: string): Promise<Board> {
     return await this.boardModel.findById(id);
   }
 
-  public async findBoards(): Promise<Board[]> {
+  async findBoardsWithName(name: string): Promise<Board[]> {
+    return await this.boardModel.find().where("author").equals(name);
+  }
+
+  async findBoards(): Promise<Board[]> {
     return await this.boardModel.find({});
   }
 
-  public async existBoardId(id: string): Promise<boolean> {
+  async existBoardId(id: string): Promise<boolean> {
     return await this.boardModel.exists({ _id: id });
   }
 
-  public async existBoardTitle(title: string): Promise<boolean> {
+  async existBoardTitle(title: string): Promise<boolean> {
     return await this.boardModel.exists({ title });
   }
 
-  public async create(board: BoardCreateUpdateDto): Promise<Board> {
+  async create(board: BoardCreateUpdateDto): Promise<Board> {
     return await this.boardModel.create(board);
   }
 
-  public async update(id: string, board: BoardCreateUpdateDto): Promise<void> {
+  async update(id: string, board: BoardCreateUpdateDto): Promise<void> {
     await this.boardModel.updateOne({ _id: id }, board);
   }
 
-  public async delete(id: string): Promise<void> {
+  async delete(id: string): Promise<void> {
     await this.boardModel.deleteOne({ _id: id });
   }
 }

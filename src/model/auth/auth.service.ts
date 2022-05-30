@@ -58,7 +58,7 @@ export class AuthService {
     return {
       statusCode: 200,
       message: "본인 정보를 가져옵니다.",
-      result: me.readOnlyData,
+      result: me.readOnlyDataSingle,
     };
   }
 

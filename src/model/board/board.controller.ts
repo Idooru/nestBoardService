@@ -34,16 +34,35 @@ export class BoardController {
   }
 
   @Get()
-  async findAllBoard(@Res() res: Response): Promise<ServerResponse> {
-    return res.status(200).json(await this.boardService.findAllBoard());
+  async findAllBoards(@Res() res: Response): Promise<ServerResponse> {
+    return res.status(200).json(await this.boardService.findAllBoards());
   }
 
   @Get(":id/id")
-  async findOneBoard(
+  async findOneBoardWithId(
     @Param("id") id: string,
     @Res() res: Response,
   ): Promise<ServerResponse> {
-    return res.status(200).json(await this.boardService.findOneBoard(id));
+    return res.status(200).json(await this.boardService.findOneBoardWithId(id));
+  }
+
+  @Get(":name/name")
+  async findBoardsWithName(
+    @Param("name") name: string,
+    @Res() res: Response,
+  ): Promise<ServerResponse> {
+    return res
+      .status(200)
+      .json(await this.boardService.findAllBoardsWithAuthorName(name));
+  }
+
+  @UseGuards(IsloginGuard)
+  @Get("/mypost")
+  async findMyBoards(
+    @GetDecoded() user: JwtPayload,
+    @Res() res: Response,
+  ): Promise<ServerResponse> {
+    return res.status(200).json(await this.boardService.findMyBoards(user));
   }
 
   @UseGuards(IsloginGuard)

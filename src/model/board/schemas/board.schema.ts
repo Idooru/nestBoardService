@@ -40,21 +40,39 @@ export class Board extends Document {
   })
   isPublic: boolean;
 
-  readonly readOnlyData: {
+  readonly readOnlyDataMultiple: {
     id: string;
     title: string;
     author: string;
     description: string;
   };
+
+  readonly readOnlyDataSingle: {
+    id: string;
+    title: string;
+    author: string;
+    description: string;
+    isPublic: boolean;
+  };
 }
 
 export const BoardSchema = SchemaFactory.createForClass(Board);
 
-BoardSchema.virtual("readOnlyData").get(function (this: Board) {
+BoardSchema.virtual("readOnlyDataMultiple").get(function (this: Board) {
   return {
     id: this.id,
     title: this.title,
     author: this.author,
     description: this.description,
+  };
+});
+
+BoardSchema.virtual("readOnlyDataSingle").get(function (this: Board) {
+  return {
+    id: this.id,
+    title: this.title,
+    author: this.author,
+    description: this.description,
+    isPublic: this.isPublic,
   };
 });

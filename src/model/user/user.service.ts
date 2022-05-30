@@ -40,7 +40,7 @@ export class UserService {
     return {
       statusCode: 201,
       message: "회원가입을 완료하였습니다.",
-      result: user.readOnlyData,
+      result: user.readOnlyDataSingle,
     };
   }
 }

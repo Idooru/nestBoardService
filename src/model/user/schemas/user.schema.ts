@@ -34,7 +34,7 @@ export class User extends Document {
   })
   password: string;
 
-  readonly readOnlyData: {
+  readonly readOnlyDataSingle: {
     id: string;
     email: string;
     name: string;
@@ -43,7 +43,7 @@ export class User extends Document {
 
 export const UserSchema = SchemaFactory.createForClass(User);
 
-UserSchema.virtual("readOnlyData").get(function (this: User) {
+UserSchema.virtual("readOnlyDataSingle").get(function (this: User) {
   return {
     id: this.id,
     email: this.email,

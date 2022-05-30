@@ -9,18 +9,30 @@ import { Json } from "../../lib/interfaces/json.interface";
 import { Board } from "./schemas/board.schema";
 import { BoardRepository } from "./board.repository";
 import { JwtPayload } from "../../../dist/model/auth/jwt/jwt-payload.interface";
+import { UserRepository } from "../user/user.repository";
 
 @Injectable()
 export class BoardService {
-  constructor(private readonly boardRepository: BoardRepository) {
-    this.boardRepository = boardRepository;
-  }
+  constructor(
+    private readonly boardRepository: BoardRepository,
+    private readonly userRepository: UserRepository,
+  ) {}
 
   private async isExistId(id: string): Promise<void> {
     const found: boolean = await this.boardRepository.existBoardId(id);
 
     if (!found) {
       throw new BadRequestException(`유효하지 않은 id입니다. id: {${id}}`);
+    }
+  }
+
+  private async isExistName(name: string): Promise<void> {
+    const found: boolean = await this.userRepository.existUserName(name);
+
+    if (!found) {
+      throw new BadRequestException(
+        `유효하지 않은 name입니다. name: {${name}}`,
+      );
     }
   }
 
@@ -47,24 +59,24 @@ export class BoardService {
     return {
       statusCode: 201,
       message: "게시물이 생성되었습니다.",
-      result: board.readOnlyData,
+      result: board.readOnlyDataSingle,
     };
   }
 
-  async findAllBoard(): Promise<Json> {
+  async findAllBoards(): Promise<Json> {
     console.time("find all board");
 
     const boards: Board[] = await this.boardRepository.findBoards();
 
     const readOnlyBoards = boards
       .filter((idx) => idx.isPublic)
-      .map((idx) => idx.readOnlyData);
+      .map((idx) => idx.readOnlyDataMultiple);
 
     if (!boards.length) {
       throw new NotFoundException("데이터베이스에 게시물이 하나도 없습니다.");
     }
 
-    console.timeEnd("find all board");
+    console.timeEnd("find all boards");
 
     return {
       statusCode: 200,
@@ -73,18 +85,54 @@ export class BoardService {
     };
   }
 
-  async findOneBoard(id: string): Promise<Json> {
-    console.time(`find one board by ${id}`);
+  async findOneBoardWithId(id: string): Promise<Json> {
+    console.time(`find one board with ${id}`);
 
     await this.isExistId(id);
     const board: Board = await this.boardRepository.findBoardWithId(id);
 
-    console.timeEnd(`find one board by ${id}`);
+    console.timeEnd(`find one board with ${id}`);
 
     return {
       statusCode: 200,
       message: `${id}에 해당하는 게시물을 가져왔습니다.`,
-      result: board.readOnlyData,
+      result: board.readOnlyDataSingle,
+    };
+  }
+
+  async findAllBoardsWithAuthorName(name: string): Promise<Json> {
+    console.time(`find boards with ${name}`);
+
+    await this.isExistName(name);
+    const boards: Board[] = await this.boardRepository.findBoardsWithName(name);
+
+    const readOnlyBoards = boards
+      .filter((idx) => idx.isPublic)
+      .map((idx) => idx.readOnlyDataMultiple);
+
+    console.timeEnd(`find boards with ${name}`);
+
+    return {
+      statusCode: 200,
+      message: `${name}이 작성한 게시물을 가져왔습니다.`,
+      result: readOnlyBoards,
+    };
+  }
+
+  async findMyBoards(user: JwtPayload): Promise<Json> {
+    console.time("find my boards");
+
+    const name = user.who.name;
+    const boards: Board[] = await this.boardRepository.findBoardsWithName(name);
+
+    const readOnlyBoards = boards.map((idx) => idx.readOnlyDataSingle);
+
+    console.timeEnd("find my boards");
+
+    return {
+      statusCode: 200,
+      message: "Hello",
+      result: readOnlyBoards,
     };
   }
 
