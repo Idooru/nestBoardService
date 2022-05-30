@@ -14,6 +14,8 @@ import { BoardRequestDto } from "./dto/board-request.dto";
 import { Response } from "express";
 import { ServerResponse } from "http";
 import { IsloginGuard } from "../auth/jwt/islogin.guard";
+import { GetDecoded } from "src/lib/decorators/user.decorator";
+import { JwtPayload } from "../../../dist/model/auth/jwt/jwt-payload.interface";
 
 @Controller("board")
 export class BoardController {
@@ -24,8 +26,11 @@ export class BoardController {
   async createBoard(
     @Body() payload: BoardRequestDto,
     @Res() res: Response,
+    @GetDecoded() user: JwtPayload,
   ): Promise<ServerResponse> {
-    return res.status(201).json(await this.boardService.createBoard(payload));
+    return res
+      .status(201)
+      .json(await this.boardService.createBoard(payload, user));
   }
 
   @Get()
@@ -47,10 +52,11 @@ export class BoardController {
     @Param("id") id: string,
     @Body() payload: BoardRequestDto,
     @Res() res: Response,
+    @GetDecoded() user: JwtPayload,
   ): Promise<ServerResponse> {
     return res
       .status(201)
-      .json(await this.boardService.updateBoard(id, payload));
+      .json(await this.boardService.updateBoard(id, payload, user));
   }
 
   @UseGuards(IsloginGuard)

@@ -1,18 +1,10 @@
-import {
-  Controller,
-  Post,
-  Body,
-  Res,
-  Get,
-  UseGuards,
-  Req,
-} from "@nestjs/common";
-import { Request, Response } from "express";
+import { Controller, Post, Body, Res, Get, UseGuards } from "@nestjs/common";
+import { Response } from "express";
 import { ServerResponse } from "http";
 import { Json } from "src/lib/interfaces/json.interface";
 import { AuthService } from "../auth/auth.service";
 import { LoginDto } from "../auth/dto/login.dto";
-import { RegisterDto } from "./dto/register.dto";
+import { UserRequestDto } from "./dto/user-request.dto";
 import { UserService } from "./user.service";
 import { IsloginGuard } from "../auth/jwt/islogin.guard";
 import { GetDecoded } from "src/lib/decorators/user.decorator";
@@ -27,7 +19,7 @@ export class UserController {
 
   @Post("/register")
   async register(
-    @Body() payload: RegisterDto,
+    @Body() payload: UserRequestDto,
     @Res() res: Response,
   ): Promise<ServerResponse> {
     return res.status(201).json(await this.userService.register(payload));
@@ -48,15 +40,6 @@ export class UserController {
   }
 
   @UseGuards(IsloginGuard)
-  @Get("/whoami")
-  async whoAmI(
-    @GetDecoded() user: JwtPayload,
-    @Res() res: Response,
-  ): Promise<ServerResponse> {
-    return res.status(200).json(await this.authService.whoAmI(user));
-  }
-
-  @UseGuards(IsloginGuard)
   @Get("/refreshToken")
   async refreshToken(
     @GetDecoded() user: JwtPayload,
@@ -67,19 +50,26 @@ export class UserController {
 
     return res
       .status(200)
-      .cookie("JWT_COOKIE", jwtToken, {
-        httpOnly: true,
-      })
+      .cookie("JWT_COOKIE", jwtToken, { httpOnly: true })
       .json(json);
   }
 
   @UseGuards(IsloginGuard)
+  @Get("/whoami")
+  async whoAmI(
+    @GetDecoded() user: JwtPayload,
+    @Res() res: Response,
+  ): Promise<ServerResponse> {
+    return res.status(200).json(await this.authService.whoAmI(user));
+  }
+
+  @UseGuards(IsloginGuard)
   @Get("/logout")
-  logout(@Req() req: Request, @Res() res: Response) {
+  logout(@Res() res: Response) {
     const json: Json = {
       statusCode: 200,
       message: "로그아웃을 완료했습니다.",
     };
-    return res.cookie("JWT_COOKIE", "").json(json);
+    return res.clearCookie("JWT_COOKIE").json(json);
   }
 }

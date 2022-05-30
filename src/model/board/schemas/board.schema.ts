@@ -3,8 +3,8 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { IsBoolean, IsNotEmpty, IsString } from "class-validator";
 
 const option: SchemaOptions = {
-  autoIndex: true,
   timestamps: true,
+  versionKey: false,
 };
 
 @Schema(option)
@@ -22,9 +22,8 @@ export class Board extends Document {
   @IsString()
   @Prop({
     required: true,
-    unique: true,
   })
-  writer: string;
+  author: string;
 
   @IsNotEmpty()
   @IsString()
@@ -44,9 +43,8 @@ export class Board extends Document {
   readonly readOnlyData: {
     id: string;
     title: string;
-    writer: string;
+    author: string;
     description: string;
-    isPublic: boolean;
   };
 }
 
@@ -56,8 +54,7 @@ BoardSchema.virtual("readOnlyData").get(function (this: Board) {
   return {
     id: this.id,
     title: this.title,
-    writer: this.writer,
+    author: this.author,
     description: this.description,
-    isPublic: this.isPublic,
   };
 });

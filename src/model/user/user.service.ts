@@ -1,5 +1,5 @@
 import { Injectable, ForbiddenException } from "@nestjs/common";
-import { RegisterDto } from "./dto/register.dto";
+import { UserRequestDto } from "./dto/user-request.dto";
 import { UserRepository } from "./user.repository";
 import { Json } from "src/lib/interfaces/json.interface";
 import { User } from "./schemas/user.schema";
@@ -10,7 +10,7 @@ import * as bcrypt from "bcrypt";
 export class UserService {
   constructor(private readonly userRepository: UserRepository) {}
 
-  async register(payload: RegisterDto): Promise<Json> {
+  async register(payload: UserRequestDto): Promise<Json> {
     console.time("register");
 
     const { email, name, password } = payload;

@@ -8,6 +8,7 @@ import { BoardRequestDto } from "./dto/board-request.dto";
 import { Json } from "../../lib/interfaces/json.interface";
 import { Board } from "./schemas/board.schema";
 import { BoardRepository } from "./board.repository";
+import { JwtPayload } from "../../../dist/model/auth/jwt/jwt-payload.interface";
 
 @Injectable()
 export class BoardService {
@@ -23,19 +24,20 @@ export class BoardService {
     }
   }
 
-  async createBoard(payload: BoardRequestDto): Promise<Json> {
+  async createBoard(payload: BoardRequestDto, user: JwtPayload): Promise<Json> {
     console.time("create board");
-    parseInt("asd");
-    const { title, writer, description, isPublic } = payload;
+
+    const { title, description, isPublic } = payload;
     const found = await this.boardRepository.existBoardTitle(title);
 
     if (found) {
       throw new ForbiddenException("게시물이 이미 존재합니다.");
     }
 
+    const author = user.who.name;
     const board: Board = await this.boardRepository.create({
       title,
-      writer,
+      author,
       description,
       isPublic,
     });
@@ -54,6 +56,10 @@ export class BoardService {
 
     const boards: Board[] = await this.boardRepository.findBoards();
 
+    const readOnlyBoards = boards
+      .filter((idx) => idx.isPublic)
+      .map((idx) => idx.readOnlyData);
+
     if (!boards.length) {
       throw new NotFoundException("데이터베이스에 게시물이 하나도 없습니다.");
     }
@@ -63,7 +69,7 @@ export class BoardService {
     return {
       statusCode: 200,
       message: "전체 게시물을 가져왔습니다.",
-      result: boards,
+      result: readOnlyBoards,
     };
   }
 
@@ -82,15 +88,22 @@ export class BoardService {
     };
   }
 
-  async updateBoard(id: string, payload: BoardRequestDto): Promise<Json> {
+  async updateBoard(
+    id: string,
+    payload: BoardRequestDto,
+    user: JwtPayload,
+  ): Promise<Json> {
     console.time(`update board by ${id}`);
 
-    const { title, writer, description, isPublic } = payload;
+    const { title, description, isPublic } = payload;
 
     await this.isExistId(id);
+
+    const author = user.who.name;
+
     await this.boardRepository.update(id, {
       title,
-      writer,
+      author,
       description,
       isPublic,
     });

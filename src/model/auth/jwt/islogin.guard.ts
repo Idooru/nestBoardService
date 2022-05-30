@@ -19,7 +19,9 @@ export class IsloginGuard implements CanActivate {
     const { JWT_COOKIE } = req.cookies;
 
     if (!JWT_COOKIE) {
-      throw new UnauthorizedException("토큰이 없으므로 로그인 할 수 없습니다.");
+      throw new UnauthorizedException(
+        "토큰이 없으므로 인증이 필요한 작없을 할 수 없습니다.",
+      );
     }
 
     req.user = this.validateToken(JWT_COOKIE);
