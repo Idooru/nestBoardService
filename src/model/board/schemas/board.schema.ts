@@ -13,7 +13,6 @@ export class Board extends Document {
   @IsString()
   @Prop({
     required: true,
-    unique: true,
     length: 20,
   })
   title: string;

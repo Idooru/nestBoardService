@@ -20,7 +20,7 @@ export class IsloginGuard implements CanActivate {
 
     if (!JWT_COOKIE) {
       throw new UnauthorizedException(
-        "토큰이 없으므로 인증이 필요한 작없을 할 수 없습니다.",
+        "토큰이 없으므로 인증이 필요한 작없을 수행 할 수 없습니다.",
       );
     }
 

@@ -39,4 +39,8 @@ export class BoardRepository {
   async delete(id: string): Promise<void> {
     await this.boardModel.deleteOne({ _id: id });
   }
+
+  async deleteBoards(name: string): Promise<void> {
+    await this.boardModel.deleteMany().where("author").equals(name);
+  }
 }

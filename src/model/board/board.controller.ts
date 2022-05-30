@@ -57,7 +57,7 @@ export class BoardController {
   }
 
   @UseGuards(IsloginGuard)
-  @Get("/mypost")
+  @Get("/my-post")
   async findMyBoards(
     @GetDecoded() user: JwtPayload,
     @Res() res: Response,

@@ -18,15 +18,23 @@ export class UserRepository {
     return await this.userModel.exists({ name });
   }
 
-  async create(user: UserCreateUpdateDto): Promise<User> {
-    return await this.userModel.create(user);
-  }
-
   async findUserByEmail(email: string): Promise<User> {
     return await this.userModel.findOne({ email });
   }
 
   async findUserById(id: string): Promise<User> {
     return await this.userModel.findById(id);
+  }
+
+  async createUser(user: UserCreateUpdateDto): Promise<User> {
+    return await this.userModel.create(user);
+  }
+
+  async setUser(user: UserCreateUpdateDto, id: string): Promise<void> {
+    await this.userModel.updateOne({ _id: id }, user);
+  }
+
+  async secession(id: string): Promise<void> {
+    await this.userModel.deleteOne({ _id: id });
   }
 }

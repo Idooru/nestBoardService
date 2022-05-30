@@ -1,4 +1,13 @@
-import { Controller, Post, Body, Res, Get, UseGuards } from "@nestjs/common";
+import {
+  Controller,
+  Post,
+  Body,
+  Res,
+  Get,
+  UseGuards,
+  Patch,
+  Delete,
+} from "@nestjs/common";
 import { Response } from "express";
 import { ServerResponse } from "http";
 import { Json } from "src/lib/interfaces/json.interface";
@@ -40,7 +49,7 @@ export class UserController {
   }
 
   @UseGuards(IsloginGuard)
-  @Get("/refreshToken")
+  @Get("/refresh-token")
   async refreshToken(
     @GetDecoded() user: JwtPayload,
     @Res() res: Response,
@@ -64,12 +73,31 @@ export class UserController {
   }
 
   @UseGuards(IsloginGuard)
-  @Get("/logout")
+  @Delete("/logout")
   logout(@Res() res: Response) {
     const json: Json = {
       statusCode: 200,
       message: "로그아웃을 완료했습니다.",
     };
-    return res.clearCookie("JWT_COOKIE").json(json);
+    return res.status(200).clearCookie("JWT_COOKIE").json(json);
+  }
+
+  @UseGuards(IsloginGuard)
+  @Patch("/set-user")
+  async setUser(
+    @Body() payload: UserRequestDto,
+    @GetDecoded() user: JwtPayload,
+    @Res() res: Response,
+  ): Promise<ServerResponse> {
+    return res.status(200).json(await this.userService.setUser(payload, user));
+  }
+
+  @UseGuards(IsloginGuard)
+  @Delete("/secession")
+  async secession(
+    @GetDecoded() user: JwtPayload,
+    @Res() res: Response,
+  ): Promise<ServerResponse> {
+    return res.status(200).json(await this.userService.secession(user));
   }
 }

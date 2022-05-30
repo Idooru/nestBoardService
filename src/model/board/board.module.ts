@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { BoardController } from "./board.controller";
 import { BoardService } from "./board.service";
 import { MongooseModule } from "@nestjs/mongoose";
@@ -10,10 +10,11 @@ import { UserModule } from "../user/user.module";
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Board.name, schema: BoardSchema }]),
-    AuthModule,
-    UserModule,
+    forwardRef(() => AuthModule),
+    forwardRef(() => UserModule),
   ],
   controllers: [BoardController],
   providers: [BoardService, BoardRepository],
+  exports: [BoardRepository],
 })
 export class BoardModule {}

@@ -1,7 +1,6 @@
 import {
   Injectable,
   BadRequestException,
-  ForbiddenException,
   NotFoundException,
 } from "@nestjs/common";
 import { BoardRequestDto } from "./dto/board-request.dto";
@@ -40,11 +39,6 @@ export class BoardService {
     console.time("create board");
 
     const { title, description, isPublic } = payload;
-    const found = await this.boardRepository.existBoardTitle(title);
-
-    if (found) {
-      throw new ForbiddenException("게시물이 이미 존재합니다.");
-    }
 
     const author = user.who.name;
     const board: Board = await this.boardRepository.create({
@@ -68,13 +62,13 @@ export class BoardService {
 
     const boards: Board[] = await this.boardRepository.findBoards();
 
-    const readOnlyBoards = boards
-      .filter((idx) => idx.isPublic)
-      .map((idx) => idx.readOnlyDataMultiple);
-
     if (!boards.length) {
       throw new NotFoundException("데이터베이스에 게시물이 하나도 없습니다.");
     }
+
+    const readOnlyBoards = boards
+      .filter((idx) => idx.isPublic)
+      .map((idx) => idx.readOnlyDataMultiple);
 
     console.timeEnd("find all boards");
 
@@ -106,6 +100,12 @@ export class BoardService {
     await this.isExistName(name);
     const boards: Board[] = await this.boardRepository.findBoardsWithName(name);
 
+    if (!boards.length) {
+      throw new NotFoundException(
+        `${name}님이 작성한 게시물이 존재하지 않습니다.`,
+      );
+    }
+
     const readOnlyBoards = boards
       .filter((idx) => idx.isPublic)
       .map((idx) => idx.readOnlyDataMultiple);
@@ -114,7 +114,7 @@ export class BoardService {
 
     return {
       statusCode: 200,
-      message: `${name}이 작성한 게시물을 가져왔습니다.`,
+      message: `${name}님이 작성한 게시물을 가져왔습니다.`,
       result: readOnlyBoards,
     };
   }
@@ -125,13 +125,19 @@ export class BoardService {
     const name = user.who.name;
     const boards: Board[] = await this.boardRepository.findBoardsWithName(name);
 
+    if (!boards.length) {
+      throw new NotFoundException(
+        `${name}님이 작성한 게시물이 존재하지 않습니다.`,
+      );
+    }
+
     const readOnlyBoards = boards.map((idx) => idx.readOnlyDataSingle);
 
     console.timeEnd("find my boards");
 
     return {
       statusCode: 200,
-      message: "Hello",
+      message: `${name}님이 작성한 게시물을 가져왔습니다.`,
       result: readOnlyBoards,
     };
   }
@@ -144,9 +150,7 @@ export class BoardService {
     console.time(`update board by ${id}`);
 
     const { title, description, isPublic } = payload;
-
     await this.isExistId(id);
-
     const author = user.who.name;
 
     await this.boardRepository.update(id, {
