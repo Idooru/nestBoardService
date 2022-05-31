@@ -65,10 +65,7 @@ export class UserController {
 
   @UseGuards(IsloginGuard)
   @Get("/whoami")
-  async whoAmI(
-    @GetDecoded() user: JwtPayload,
-    @Res() res: Response,
-  ): Promise<ServerResponse> {
+  whoAmI(@GetDecoded() user: JwtPayload, @Res() res: Response): ServerResponse {
     const json: Json = {
       statusCode: 200,
       message: "본인 정보를 가져옵니다.",
@@ -83,7 +80,7 @@ export class UserController {
 
   @UseGuards(IsloginGuard)
   @Delete("/logout")
-  logout(@Res() res: Response) {
+  logout(@Res() res: Response): ServerResponse {
     const json: Json = {
       statusCode: 200,
       message: "로그아웃을 완료했습니다.",

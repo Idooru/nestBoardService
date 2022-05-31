@@ -20,6 +20,7 @@ import { GetDecoded } from "src/lib/decorators/user.decorator";
 import { JwtPayload } from "../auth/jwt/jwt-payload.interface";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { multerOptions } from "../../lib/multer/multer-option";
+import { Json } from "src/lib/interfaces/json.interface";
 
 @Controller("board")
 export class BoardController {
@@ -29,12 +30,30 @@ export class BoardController {
   @Post()
   async createBoard(
     @Body() payload: BoardRequestDto,
-    @Res() res: Response,
     @GetDecoded() user: JwtPayload,
+    @Res() res: Response,
   ): Promise<ServerResponse> {
     return res
       .status(201)
       .json(await this.boardService.createBoard(payload, user));
+  }
+
+  @UseGuards(IsloginGuard)
+  @UseInterceptors(FilesInterceptor("image", 10, multerOptions("image")))
+  @Post("/upload-img")
+  uploadImgForBoard(
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @Res() res: Response,
+  ): ServerResponse {
+    console.log(files);
+
+    const json: Json = {
+      statusCode: 201,
+      message: "사진을 업로드하였습니다.",
+      result: `image/${files[0].filename}`,
+    };
+
+    return res.status(201).json(json);
   }
 
   @Get()
