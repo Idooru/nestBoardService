@@ -52,7 +52,7 @@ export class UserService {
   async setUser(payload: UserRequestDto, user: JwtPayload): Promise<Json> {
     console.time("set user");
 
-    const id = user.who.id;
+    const id = user.id;
 
     await this.userRepository.setUser(payload, id);
 
@@ -67,8 +67,8 @@ export class UserService {
   async secession(user: JwtPayload): Promise<Json> {
     console.time("secession");
 
-    const id = user.who.id;
-    const name = user.who.name;
+    const id = user.id;
+    const name = user.name;
 
     await this.userRepository.secession(id);
     await this.boardRepository.deleteBoards(name);

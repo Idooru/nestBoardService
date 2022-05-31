@@ -69,7 +69,16 @@ export class UserController {
     @GetDecoded() user: JwtPayload,
     @Res() res: Response,
   ): Promise<ServerResponse> {
-    return res.status(200).json(await this.authService.whoAmI(user));
+    const json: Json = {
+      statusCode: 200,
+      message: "본인 정보를 가져옵니다.",
+      result: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+      },
+    };
+    return res.status(200).json(json);
   }
 
   @UseGuards(IsloginGuard)

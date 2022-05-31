@@ -32,8 +32,9 @@ export class AuthService {
     }
 
     const dataToBeJwt: JwtPayload = {
-      email,
-      who: { id: user.id, name: user.name },
+      id: user.id,
+      email: user.email,
+      name: user.name,
     };
 
     const jwtToken: string = this.jwtService.sign(dataToBeJwt);
@@ -47,32 +48,17 @@ export class AuthService {
     };
   }
 
-  async whoAmI(decryptedToken: JwtPayload): Promise<Json> {
-    console.time("whoAmI");
-
-    const id: string = decryptedToken.who.id;
-    const me: User = await this.userRepository.findUserById(id);
-
-    console.timeEnd("whoAmI");
-
-    return {
-      statusCode: 200,
-      message: "본인 정보를 가져옵니다.",
-      result: me.readOnlyDataSingle,
-    };
-  }
-
   async refreshToken(decryptedToken: JwtPayload): Promise<Json> {
     console.time("refreshToken");
 
-    const id: string = decryptedToken.who.id;
+    const id: string = decryptedToken.id;
     const user: User = await this.userRepository.findUserById(id);
 
     const email = user.email;
     const name = user.name;
 
-    const dataToBeToken: JwtPayload = { email, who: { id, name } };
-    const jwtToken: string = this.jwtService.sign(dataToBeToken);
+    const dataToBeJwt: JwtPayload = { id, email, name };
+    const jwtToken: string = this.jwtService.sign(dataToBeJwt);
 
     console.timeEnd("refreshToken");
 
