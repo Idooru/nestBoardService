@@ -7,7 +7,7 @@ import { BoardRequestDto } from "./dto/board-request.dto";
 import { Json } from "../../lib/interfaces/json.interface";
 import { Board } from "./schemas/board.schema";
 import { BoardRepository } from "./board.repository";
-import { JwtPayload } from "../../../dist/model/auth/jwt/jwt-payload.interface";
+import { JwtPayload } from "../auth/jwt/jwt-payload.interface";
 import { UserRepository } from "../user/user.repository";
 
 @Injectable()
@@ -40,12 +40,14 @@ export class BoardService {
 
     const { title, description, isPublic } = payload;
 
-    const author = user.who.name;
+    const author = user.name;
+    const now = Date().replace("GMT+0900 (대한민국 표준시)", "");
     const board: Board = await this.boardRepository.create({
       title,
       author,
       description,
       isPublic,
+      whenCreated: now,
     });
 
     console.timeEnd("create board");
@@ -122,7 +124,7 @@ export class BoardService {
   async findMyBoards(user: JwtPayload): Promise<Json> {
     console.time("find my boards");
 
-    const name = user.who.name;
+    const name = user.name;
     const boards: Board[] = await this.boardRepository.findBoardsWithName(name);
 
     if (!boards.length) {
@@ -151,13 +153,14 @@ export class BoardService {
 
     const { title, description, isPublic } = payload;
     await this.isExistId(id);
-    const author = user.who.name;
-
+    const author = user.name;
+    const now = Date().replace("GMT+0900 (대한민국 표준시)", "");
     await this.boardRepository.update(id, {
       title,
       author,
       description,
       isPublic,
+      whenUpdated: now,
     });
 
     console.timeEnd(`update board by ${id}`);

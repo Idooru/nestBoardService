@@ -3,7 +3,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { IsBoolean, IsNotEmpty, IsString } from "class-validator";
 
 const option: SchemaOptions = {
-  timestamps: true,
+  timestamps: false,
   versionKey: false,
 };
 
@@ -32,6 +32,12 @@ export class Board extends Document {
   })
   description: string;
 
+  @IsString()
+  @Prop({
+    default: "no image",
+  })
+  imgUrl?: string | null;
+
   @IsNotEmpty()
   @IsBoolean()
   @Prop({
@@ -39,11 +45,26 @@ export class Board extends Document {
   })
   isPublic: boolean;
 
+  @IsNotEmpty()
+  @IsString()
+  @Prop({
+    required: true,
+  })
+  whenCreated: string;
+
+  @IsString()
+  @Prop({
+    default: "not yet",
+  })
+  whenUpdated?: string | null;
+
   readonly readOnlyDataMultiple: {
     id: string;
     title: string;
     author: string;
     description: string;
+    whenCreated: string;
+    whenUpated: string;
   };
 
   readonly readOnlyDataSingle: {
@@ -52,6 +73,8 @@ export class Board extends Document {
     author: string;
     description: string;
     isPublic: boolean;
+    whenCreated: string;
+    whenUpated: string;
   };
 }
 
@@ -63,6 +86,8 @@ BoardSchema.virtual("readOnlyDataMultiple").get(function (this: Board) {
     title: this.title,
     author: this.author,
     description: this.description,
+    whenCreated: this.whenCreated,
+    whenUpdated: this.whenUpdated,
   };
 });
 
@@ -73,5 +98,7 @@ BoardSchema.virtual("readOnlyDataSingle").get(function (this: Board) {
     author: this.author,
     description: this.description,
     isPublic: this.isPublic,
+    whenCreated: this.whenCreated,
+    whenUpdated: this.whenUpdated,
   };
 });

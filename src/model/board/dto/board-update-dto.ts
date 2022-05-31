@@ -1,9 +1,10 @@
 import { PickType } from "@nestjs/mapped-types";
 import { Board } from "../schemas/board.schema";
 
-export class BoardCreateUpdateDto extends PickType(Board, [
+export class BoardUpdateDto extends PickType(Board, [
   "title",
   "author",
   "description",
   "isPublic",
+  "whenUpdated",
 ] as const) {}
