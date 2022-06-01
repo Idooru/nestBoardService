@@ -15,9 +15,9 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
   app.use(cookieParser());
 
-  console.log(path.join(__dirname, "../uploads/image"));
-
-  app.useStaticAssets(path.join(__dirname, "../uploads/image"));
+  app.useStaticAssets(path.join(__dirname, "../uploads/image"), {
+    prefix: "/uploads",
+  });
 
   app.listen(port, () =>
     console.log(`Server is running at http://localhost:${port}`),

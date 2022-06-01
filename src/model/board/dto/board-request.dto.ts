@@ -5,5 +5,4 @@ export class BoardRequestDto extends PickType(Board, [
   "title",
   "description",
   "isPublic",
-  "imgNames",
 ] as const) {}

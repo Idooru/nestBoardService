@@ -20,6 +20,7 @@ import { GetDecoded } from "src/lib/decorators/user.decorator";
 import { JwtPayload } from "../auth/jwt/jwt-payload.interface";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { MulterOperation } from "src/lib/multer/multer-operation";
+import { Json } from "src/lib/interfaces/json.interface";
 
 @Controller("board")
 export class BoardController {
@@ -48,7 +49,14 @@ export class BoardController {
     @Res() res: Response,
   ): Promise<ServerResponse> {
     console.log(files);
-    return res.status(201).json(await this.boardService.uploadImg(files, user));
+
+    const json: Json = await this.boardService.uploadImg(files, user);
+    const imgUrls: string[] = json.result;
+
+    imgUrls.forEach((idx) => res);
+
+    res.cookie("first", imgUrls[0]);
+    return res.status(201).json(json);
   }
 
   @Get()

@@ -40,9 +40,6 @@ export class Board extends Document {
   isPublic: boolean;
 
   @IsArray()
-  imgNames?: Array<string> | null;
-
-  @IsArray()
   @Prop({
     default: "no image",
   })
@@ -90,7 +87,6 @@ BoardSchema.virtual("readOnlyDataMultiple").get(function (this: Board) {
     title: this.title,
     author: this.author,
     description: this.description,
-    imgName: this.imgNames,
     imgUrl: this.imgUrls,
     whenCreated: this.whenCreated,
     whenUpdated: this.whenUpdated,
@@ -104,7 +100,6 @@ BoardSchema.virtual("readOnlyDataSingle").get(function (this: Board) {
     author: this.author,
     description: this.description,
     isPublic: this.isPublic,
-    imgName: this.imgNames,
     imgUl: this.imgUrls,
     whenCreated: this.whenCreated,
     whenUpdated: this.whenUpdated,

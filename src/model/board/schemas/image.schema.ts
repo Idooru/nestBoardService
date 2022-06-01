@@ -24,10 +24,13 @@ export class Image extends Document {
   })
   author: string;
 
+  index: string;
+
   readonly readOnlyData: {
     id: string;
     fileName: string;
     author: string;
+    index: string;
   };
 }
 
@@ -38,5 +41,6 @@ ImageSchema.virtual("readOnlyData").get(function (this: Image) {
     id: this.id,
     fileName: this.fileName,
     author: this.author,
+    index: string,
   };
 });

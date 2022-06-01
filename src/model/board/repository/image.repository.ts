@@ -7,15 +7,13 @@ export class ImageRepository {
   constructor(@InjectModel("Image") readonly imageModel: Model<Image>) {}
 
   async uploadImg(image: ImageUploadDto): Promise<string> {
-    const fileNameOnUrl = `http://localhost:8001/${image.fileName}`;
+    const fileNameOnUrl = `http://localhost:8001/uploads/${image.fileName}`;
+
     await this.imageModel.create({
       fileName: fileNameOnUrl,
       author: image.author,
     });
-    return fileNameOnUrl;
-  }
 
-  async findImgUrlByName(imgName: string): Promise<Image> {
-    return await this.imageModel.findOne().where("filename").equals(imgName);
+    return fileNameOnUrl;
   }
 }
