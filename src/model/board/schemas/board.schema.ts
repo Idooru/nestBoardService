@@ -1,6 +1,6 @@
 import { SchemaOptions, Document } from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { IsBoolean, IsNotEmpty, IsString } from "class-validator";
+import { IsArray, IsBoolean, IsNotEmpty, IsString } from "class-validator";
 
 const option: SchemaOptions = {
   timestamps: false,
@@ -39,17 +39,14 @@ export class Board extends Document {
   })
   isPublic: boolean;
 
-  @IsString()
+  @IsArray()
+  imgNames?: Array<string> | null;
+
+  @IsArray()
   @Prop({
     default: "no image",
   })
-  imgName?: string | string[] | null;
-
-  @IsString()
-  @Prop({
-    default: "no image url",
-  })
-  imgUrl?: string | string[] | null;
+  imgUrls?: Array<string> | null;
 
   @IsNotEmpty()
   @IsString()
@@ -79,7 +76,7 @@ export class Board extends Document {
     author: string;
     description: string;
     isPublic: boolean;
-    imgUrl: string | string[] | null;
+    imgUrls: Array<string> | null;
     whenCreated: string;
     whenUpated: string;
   };
@@ -93,8 +90,8 @@ BoardSchema.virtual("readOnlyDataMultiple").get(function (this: Board) {
     title: this.title,
     author: this.author,
     description: this.description,
-    imgName: this.imgName,
-    imgUrl: this.imgUrl,
+    imgName: this.imgNames,
+    imgUrl: this.imgUrls,
     whenCreated: this.whenCreated,
     whenUpdated: this.whenUpdated,
   };
@@ -107,8 +104,8 @@ BoardSchema.virtual("readOnlyDataSingle").get(function (this: Board) {
     author: this.author,
     description: this.description,
     isPublic: this.isPublic,
-    imgName: this.imgName,
-    imgUel: this.imgUrl,
+    imgName: this.imgNames,
+    imgUl: this.imgUrls,
     whenCreated: this.whenCreated,
     whenUpdated: this.whenUpdated,
   };

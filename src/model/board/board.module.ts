@@ -8,9 +8,13 @@ import { AuthModule } from "../auth/auth.module";
 import { UserModule } from "../user/user.module";
 import { ImageRepository } from "./repository/image.repository";
 import { Image, ImageSchema } from "./schemas/image.schema";
+import { MulterModule } from "@nestjs/platform-express";
 
 @Module({
   imports: [
+    MulterModule.register({
+      dest: "./upload",
+    }),
     MongooseModule.forFeature([
       { name: Board.name, schema: BoardSchema },
       { name: Image.name, schema: ImageSchema },

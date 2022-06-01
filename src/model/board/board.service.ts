@@ -39,22 +39,6 @@ export class BoardService {
     console.time("create board");
 
     const { title, description, isPublic } = payload;
-    let { imgName } = payload;
-
-    if (imgName.length >= 2) {
-      imgName = "asd";
-    } else {
-    }
-
-    const found: boolean = await this.imageRepository.existImgName(imgName);
-
-    if (!found) {
-      throw new NotFoundException(
-        `유효하지 않은 imgName입니다. imgName: {${imgName}}`,
-      );
-    }
-
-    const imgUrl = await this.imageRepository.findImgUrlByName();
 
     const author = user.name;
     const now = Date().replace("GMT+0900 (대한민국 표준시)", "");
@@ -64,7 +48,6 @@ export class BoardService {
       author,
       description,
       isPublic,
-      imgUrl,
       whenCreated: now,
     });
 

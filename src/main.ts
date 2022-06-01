@@ -4,8 +4,6 @@ import { AppModule } from "./app.module";
 import { HttpExceptionFilter } from "./lib/exception/http-exception.filter";
 import { NestExpressApplication } from "@nestjs/platform-express";
 
-import * as express from "express";
-
 import * as cookieParser from "cookie-parser";
 import * as path from "path";
 
