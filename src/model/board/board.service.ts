@@ -64,10 +64,10 @@ export class BoardService {
     files: Array<Express.Multer.File>,
     user: JwtPayload,
   ): Promise<Json> {
-    console.time("uplaod image");
+    console.time("upload image");
 
     let fileName: Array<string> | string;
-
+    let fileN: string;
     if (!files.length) {
       throw new BadRequestException(
         "사진을 업로드 할 수 없습니다. 사진을 제시해주세요.",
@@ -80,11 +80,11 @@ export class BoardService {
       fileName = files.map((idx) => idx.filename);
       files.forEach(async (idx) => {
         const fileName = idx.filename;
-        await this.imageRepository.uploadImg({ fileName, author });
+        fileN = await this.imageRepository.uploadImg({ fileName, author });
       });
     } else {
       fileName = files[0].filename;
-      await this.imageRepository.uploadImg({ fileName, author });
+      fileN = await this.imageRepository.uploadImg({ fileName, author });
     }
 
     console.timeEnd("upload image");
@@ -92,6 +92,7 @@ export class BoardService {
     return {
       statusCode: 201,
       message: "사진을 업로드 하였습니다.",
+      result: fileN,
     };
   }
 

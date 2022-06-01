@@ -19,7 +19,7 @@ import { IsloginGuard } from "../auth/jwt/islogin.guard";
 import { GetDecoded } from "src/lib/decorators/user.decorator";
 import { JwtPayload } from "../auth/jwt/jwt-payload.interface";
 import { FilesInterceptor } from "@nestjs/platform-express";
-import { multerOptions } from "../../lib/multer/multer-option";
+import { MulterOperation } from "src/lib/multer/multer-operation";
 
 @Controller("board")
 export class BoardController {
@@ -38,7 +38,9 @@ export class BoardController {
   }
 
   @UseGuards(IsloginGuard)
-  @UseInterceptors(FilesInterceptor("image", 10, multerOptions("image")))
+  @UseInterceptors(
+    FilesInterceptor("image", 10, new MulterOperation("image").apply()),
+  )
   @Post("/image")
   async uploadImgForBoard(
     @UploadedFiles() files: Array<Express.Multer.File>,
