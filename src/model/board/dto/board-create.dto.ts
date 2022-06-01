@@ -6,5 +6,6 @@ export class BoardCreateDto extends PickType(Board, [
   "author",
   "description",
   "isPublic",
+  "imgUrl",
   "whenCreated",
 ] as const) {}

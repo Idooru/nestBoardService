@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Board } from "./schemas/board.schema";
+import { Board } from "../schemas/board.schema";
 import { Model } from "mongoose";
-import { BoardCreateDto } from "./dto/board-create.dto";
-import { BoardUpdateDto } from "./dto/board-update-dto";
+import { BoardCreateDto } from "../dto/board-create.dto";
+import { BoardUpdateDto } from "../dto/board-update-dto";
 
 @Injectable()
 export class BoardRepository {

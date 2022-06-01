@@ -6,5 +6,6 @@ export class BoardUpdateDto extends PickType(Board, [
   "author",
   "description",
   "isPublic",
+  "imgUrl",
   "whenUpdated",
 ] as const) {}

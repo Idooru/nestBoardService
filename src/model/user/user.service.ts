@@ -3,10 +3,10 @@ import { UserRequestDto } from "./dto/user-request.dto";
 import { UserRepository } from "./user.repository";
 import { Json } from "src/lib/interfaces/json.interface";
 import { User } from "./schemas/user.schema";
+import { JwtPayload } from "../auth/jwt/jwt-payload.interface";
+import { BoardRepository } from "../board/repository/board.repository";
 
 import * as bcrypt from "bcrypt";
-import { JwtPayload } from "../auth/jwt/jwt-payload.interface";
-import { BoardRepository } from "../board/board.repository";
 
 @Injectable()
 export class UserService {

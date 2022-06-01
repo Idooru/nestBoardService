@@ -32,18 +32,24 @@ export class Board extends Document {
   })
   description: string;
 
-  @IsString()
-  @Prop({
-    default: "no image",
-  })
-  imgUrl?: string | null;
-
   @IsNotEmpty()
   @IsBoolean()
   @Prop({
     required: true,
   })
   isPublic: boolean;
+
+  @IsString()
+  @Prop({
+    default: "no image",
+  })
+  imgName?: string | string[] | null;
+
+  @IsString()
+  @Prop({
+    default: "no image url",
+  })
+  imgUrl?: string | string[] | null;
 
   @IsNotEmpty()
   @IsString()
@@ -73,6 +79,7 @@ export class Board extends Document {
     author: string;
     description: string;
     isPublic: boolean;
+    imgUrl: string | string[] | null;
     whenCreated: string;
     whenUpated: string;
   };
@@ -86,6 +93,8 @@ BoardSchema.virtual("readOnlyDataMultiple").get(function (this: Board) {
     title: this.title,
     author: this.author,
     description: this.description,
+    imgName: this.imgName,
+    imgUrl: this.imgUrl,
     whenCreated: this.whenCreated,
     whenUpdated: this.whenUpdated,
   };
@@ -98,6 +107,8 @@ BoardSchema.virtual("readOnlyDataSingle").get(function (this: Board) {
     author: this.author,
     description: this.description,
     isPublic: this.isPublic,
+    imgName: this.imgName,
+    imgUel: this.imgUrl,
     whenCreated: this.whenCreated,
     whenUpdated: this.whenUpdated,
   };
