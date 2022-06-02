@@ -6,14 +6,15 @@ import { ImageUploadDto } from "../dto/image-upload.dto";
 export class ImageRepository {
   constructor(@InjectModel("Image") readonly imageModel: Model<Image>) {}
 
-  async uploadImg(image: ImageUploadDto): Promise<string> {
+  async uploadImg(image: ImageUploadDto): Promise<string[]> {
     const fileNameOnUrl = `http://localhost:8001/uploads/${image.fileName}`;
 
     await this.imageModel.create({
       fileName: fileNameOnUrl,
       author: image.author,
+      originalName: image.originalName,
     });
 
-    return fileNameOnUrl;
+    return [image.originalName, fileNameOnUrl];
   }
 }

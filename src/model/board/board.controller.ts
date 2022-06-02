@@ -16,11 +16,12 @@ import { BoardRequestDto } from "./dto/board-request.dto";
 import { Response } from "express";
 import { ServerResponse } from "http";
 import { IsloginGuard } from "../auth/jwt/islogin.guard";
-import { GetDecoded } from "src/lib/decorators/user.decorator";
+import { GetDecodedJwt } from "src/lib/decorators/user.decorator";
 import { JwtPayload } from "../auth/jwt/jwt-payload.interface";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { MulterOperation } from "src/lib/multer/multer-operation";
 import { Json } from "src/lib/interfaces/json.interface";
+import { GetImageCookies } from "src/lib/decorators/get-image-cookies.decorator";
 
 @Controller("board")
 export class BoardController {
@@ -30,7 +31,8 @@ export class BoardController {
   @Post()
   async createBoard(
     @Body() payload: BoardRequestDto,
-    @GetDecoded() user: JwtPayload,
+    @GetDecodedJwt() user: JwtPayload,
+    @GetImageCookies() cookies: string,
     @Res() res: Response,
   ): Promise<ServerResponse> {
     return res
@@ -45,17 +47,18 @@ export class BoardController {
   @Post("/image")
   async uploadImgForBoard(
     @UploadedFiles() files: Array<Express.Multer.File>,
-    @GetDecoded() user: JwtPayload,
+    @GetDecodedJwt() user: JwtPayload,
     @Res() res: Response,
   ): Promise<ServerResponse> {
     console.log(files);
 
     const json: Json = await this.boardService.uploadImg(files, user);
-    const imgUrls: string[] = json.result;
+    const imgInfo: string[] = json.result;
 
-    imgUrls.forEach((idx) => res);
+    imgInfo.forEach((idx) => {
+      res.cookie(idx[0], idx[1]);
+    });
 
-    res.cookie("first", imgUrls[0]);
     return res.status(201).json(json);
   }
 
@@ -85,7 +88,7 @@ export class BoardController {
   @UseGuards(IsloginGuard)
   @Get("/my-post")
   async findMyBoards(
-    @GetDecoded() user: JwtPayload,
+    @GetDecodedJwt() user: JwtPayload,
     @Res() res: Response,
   ): Promise<ServerResponse> {
     return res.status(200).json(await this.boardService.findMyBoards(user));
@@ -97,7 +100,7 @@ export class BoardController {
     @Param("id") id: string,
     @Body() payload: BoardRequestDto,
     @Res() res: Response,
-    @GetDecoded() user: JwtPayload,
+    @GetDecodedJwt() user: JwtPayload,
   ): Promise<ServerResponse> {
     return res
       .status(201)

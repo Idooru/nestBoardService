@@ -16,7 +16,7 @@ import { LoginDto } from "../auth/dto/login.dto";
 import { UserRequestDto } from "./dto/user-request.dto";
 import { UserService } from "./user.service";
 import { IsloginGuard } from "../auth/jwt/islogin.guard";
-import { GetDecoded } from "src/lib/decorators/user.decorator";
+import { GetDecodedJwt } from "src/lib/decorators/user.decorator";
 import { JwtPayload } from "../auth/jwt/jwt-payload.interface";
 
 @Controller("/user")
@@ -51,7 +51,7 @@ export class UserController {
   @UseGuards(IsloginGuard)
   @Get("/refresh-token")
   async refreshToken(
-    @GetDecoded() user: JwtPayload,
+    @GetDecodedJwt() user: JwtPayload,
     @Res() res: Response,
   ): Promise<ServerResponse> {
     const json: Json = await this.authService.refreshToken(user);
@@ -65,7 +65,10 @@ export class UserController {
 
   @UseGuards(IsloginGuard)
   @Get("/whoami")
-  whoAmI(@GetDecoded() user: JwtPayload, @Res() res: Response): ServerResponse {
+  whoAmI(
+    @GetDecodedJwt() user: JwtPayload,
+    @Res() res: Response,
+  ): ServerResponse {
     const json: Json = {
       statusCode: 200,
       message: "본인 정보를 가져옵니다.",
@@ -92,7 +95,7 @@ export class UserController {
   @Patch("/set-user")
   async setUser(
     @Body() payload: UserRequestDto,
-    @GetDecoded() user: JwtPayload,
+    @GetDecodedJwt() user: JwtPayload,
     @Res() res: Response,
   ): Promise<ServerResponse> {
     return res.status(200).json(await this.userService.setUser(payload, user));
@@ -101,7 +104,7 @@ export class UserController {
   @UseGuards(IsloginGuard)
   @Delete("/secession")
   async secession(
-    @GetDecoded() user: JwtPayload,
+    @GetDecodedJwt() user: JwtPayload,
     @Res() res: Response,
   ): Promise<ServerResponse> {
     return res.status(200).json(await this.userService.secession(user));

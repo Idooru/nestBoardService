@@ -66,8 +66,7 @@ export class BoardService {
   ): Promise<Json> {
     console.time("upload image");
 
-    let fileName: Array<string> | string;
-    const imgUrls: Array<string> = [];
+    const imgUrls: Array<string[]> = [];
     const author = user.name;
 
     if (!files.length) {
@@ -75,16 +74,27 @@ export class BoardService {
         "사진을 업로드 할 수 없습니다. 사진을 제시해주세요.",
       );
     } else if (files.length >= 2) {
-      fileName = files.map((idx) => idx.filename);
-      for (const i of files) {
-        const fileName = i.filename;
+      for (const index of files) {
+        const fileName = index.filename;
+        const originalName = index.originalname;
         imgUrls.push(
-          await this.imageRepository.uploadImg({ fileName, author, index }),
+          await this.imageRepository.uploadImg({
+            fileName,
+            author,
+            originalName,
+          }),
         );
       }
     } else {
-      fileName = files[0].filename;
-      imgUrls.push(await this.imageRepository.uploadImg({ fileName, author }));
+      const fileName = files[0].filename;
+      const originalName = files[0].originalname;
+      imgUrls.push(
+        await this.imageRepository.uploadImg({
+          fileName,
+          author,
+          originalName,
+        }),
+      );
     }
 
     console.timeEnd("upload image");
