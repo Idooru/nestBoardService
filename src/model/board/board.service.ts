@@ -10,6 +10,7 @@ import { BoardRepository } from "./repository/board.repository";
 import { JwtPayload } from "../auth/jwt/jwt-payload.interface";
 import { UserRepository } from "../user/user.repository";
 import { ImageRepository } from "./repository/image.repository";
+import { ImageReturnDto } from "./dto/image-return.dto";
 
 @Injectable()
 export class BoardService {
@@ -35,19 +36,28 @@ export class BoardService {
     }
   }
 
-  async createBoard(payload: BoardRequestDto, user: JwtPayload): Promise<Json> {
+  async createBoard(
+    payload: BoardRequestDto,
+    imgUrls: Array<ImageReturnDto>,
+    user: JwtPayload,
+  ): Promise<Json> {
     console.time("create board");
 
     const { title, description, isPublic } = payload;
-
     const author = user.name;
     const now = Date().replace("GMT+0900 (대한민국 표준시)", "");
+    let Urls = imgUrls.map((idx) => idx.url);
+
+    if (!Urls.length) {
+      Urls = undefined;
+    }
 
     const board: Board = await this.boardRepository.create({
       title,
       author,
       description,
       isPublic,
+      imgUrls: Urls,
       whenCreated: now,
     });
 
@@ -66,7 +76,7 @@ export class BoardService {
   ): Promise<Json> {
     console.time("upload image");
 
-    const imgUrls: Array<string[]> = [];
+    const imgUrls: Array<ImageReturnDto> = [];
     const author = user.name;
 
     if (!files.length) {
@@ -194,6 +204,7 @@ export class BoardService {
   async updateBoard(
     id: string,
     payload: BoardRequestDto,
+    imgUrls: Array<ImageReturnDto>,
     user: JwtPayload,
   ): Promise<Json> {
     console.time(`update board by ${id}`);
@@ -202,11 +213,18 @@ export class BoardService {
     await this.isExistId(id);
     const author = user.name;
     const now = Date().replace("GMT+0900 (대한민국 표준시)", "");
+    let Urls = imgUrls.map((idx) => idx.url);
+
+    if (!Urls.length) {
+      Urls = undefined;
+    }
+
     await this.boardRepository.update(id, {
       title,
       author,
       description,
       isPublic,
+      imgUrls: Urls,
       whenUpdated: now,
     });
 

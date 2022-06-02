@@ -100,7 +100,7 @@ BoardSchema.virtual("readOnlyDataSingle").get(function (this: Board) {
     author: this.author,
     description: this.description,
     isPublic: this.isPublic,
-    imgUl: this.imgUrls,
+    imgUrl: this.imgUrls,
     whenCreated: this.whenCreated,
     whenUpdated: this.whenUpdated,
   };

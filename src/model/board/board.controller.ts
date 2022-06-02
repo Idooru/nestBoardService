@@ -22,6 +22,7 @@ import { FilesInterceptor } from "@nestjs/platform-express";
 import { MulterOperation } from "src/lib/multer/multer-operation";
 import { Json } from "src/lib/interfaces/json.interface";
 import { GetImageCookies } from "src/lib/decorators/get-image-cookies.decorator";
+import { ImageReturnDto } from "./dto/image-return.dto";
 
 @Controller("board")
 export class BoardController {
@@ -32,12 +33,20 @@ export class BoardController {
   async createBoard(
     @Body() payload: BoardRequestDto,
     @GetDecodedJwt() user: JwtPayload,
-    @GetImageCookies() cookies: string,
+    @GetImageCookies() imgUrls: Array<ImageReturnDto>,
     @Res() res: Response,
   ): Promise<ServerResponse> {
-    return res
-      .status(201)
-      .json(await this.boardService.createBoard(payload, user));
+    const json: Json = await this.boardService.createBoard(
+      payload,
+      imgUrls,
+      user,
+    );
+
+    imgUrls.forEach((idx) => {
+      res.clearCookie(idx.name);
+    });
+
+    return res.status(201).json(json);
   }
 
   @UseGuards(IsloginGuard)
@@ -53,10 +62,10 @@ export class BoardController {
     console.log(files);
 
     const json: Json = await this.boardService.uploadImg(files, user);
-    const imgInfo: string[] = json.result;
+    const imgInfo = json.result;
 
-    imgInfo.forEach((idx) => {
-      res.cookie(idx[0], idx[1]);
+    imgInfo.forEach((idx: ImageReturnDto) => {
+      res.cookie(idx.name, idx.url);
     });
 
     return res.status(201).json(json);
@@ -101,10 +110,20 @@ export class BoardController {
     @Body() payload: BoardRequestDto,
     @Res() res: Response,
     @GetDecodedJwt() user: JwtPayload,
+    @GetImageCookies() imgUrls: Array<ImageReturnDto>,
   ): Promise<ServerResponse> {
-    return res
-      .status(201)
-      .json(await this.boardService.updateBoard(id, payload, user));
+    const json: Json = await this.boardService.updateBoard(
+      id,
+      payload,
+      imgUrls,
+      user,
+    );
+
+    imgUrls.forEach((idx) => {
+      res.clearCookie(idx.name);
+    });
+
+    return res.status(201).json(json);
   }
 
   @UseGuards(IsloginGuard)

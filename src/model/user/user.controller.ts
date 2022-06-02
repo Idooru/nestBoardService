@@ -107,6 +107,9 @@ export class UserController {
     @GetDecodedJwt() user: JwtPayload,
     @Res() res: Response,
   ): Promise<ServerResponse> {
-    return res.status(200).json(await this.userService.secession(user));
+    return res
+      .status(200)
+      .clearCookie("JWT_COOKIE")
+      .json(await this.userService.secession(user));
   }
 }
