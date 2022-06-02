@@ -12,17 +12,17 @@ export class MulterOperation {
 
   createFolder(folder: string) {
     try {
-      this.logger.log("uploads 폴더를 생성합니다.");
+      this.logger.log("create uploads folder");
       fs.mkdirSync(path.join(__dirname, "../../../uploads"));
     } catch (err) {
-      this.logger.log("uploads 폴더가 이미 존재합니다.");
+      this.logger.log("uploads folder is already exist");
     }
 
     try {
-      this.logger.log(`uploads 폴더안에 ${folder}폴더 를 생성합니다.`);
+      this.logger.log(`create ${folder} folder into uploads foler`);
       fs.mkdirSync(path.join(__dirname, `../../../uploads/${folder}`));
     } catch (err) {
-      this.logger.log(`${folder} 폴더가 이미 존재합니다.`);
+      this.logger.log(`${folder} is already exist`);
     }
   }
 

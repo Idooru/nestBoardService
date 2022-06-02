@@ -30,20 +30,6 @@ export class Image extends Document {
     required: true,
   })
   originalName: string;
-
-  readonly readOnlyData: {
-    id: string;
-    fileName: string;
-    author: string;
-  };
 }
 
 export const ImageSchema = SchemaFactory.createForClass(Image);
-
-ImageSchema.virtual("readOnlyData").get(function (this: Image) {
-  return {
-    id: this.id,
-    fileName: this.fileName,
-    author: this.author,
-  };
-});
