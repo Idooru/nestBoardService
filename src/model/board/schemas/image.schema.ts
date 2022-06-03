@@ -5,6 +5,7 @@ import { Document } from "mongoose";
 const option: SchemaOptions = {
   autoIndex: true,
   versionKey: false,
+  timestamps: true,
 };
 
 @Schema(option)

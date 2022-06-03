@@ -42,9 +42,7 @@ export class BoardController {
       user,
     );
 
-    imgUrls.forEach((idx) => {
-      res.clearCookie(idx.name);
-    });
+    imgUrls.forEach((idx) => res.clearCookie(idx.name));
 
     return res.status(201).json(json);
   }
@@ -64,9 +62,7 @@ export class BoardController {
     const json: Json = await this.boardService.uploadImg(files, user);
     const imgInfo = json.result;
 
-    imgInfo.forEach((idx: ImageReturnDto) => {
-      res.cookie(idx.name, idx.url);
-    });
+    imgInfo.forEach((idx: ImageReturnDto) => res.cookie(idx.name, idx.url));
 
     return res.status(201).json(json);
   }
@@ -119,9 +115,7 @@ export class BoardController {
       user,
     );
 
-    imgUrls.forEach((idx) => {
-      res.clearCookie(idx.name);
-    });
+    imgUrls.forEach((idx) => res.clearCookie(idx.name));
 
     return res.status(201).json(json);
   }

@@ -45,12 +45,8 @@ export class BoardService {
 
     const { title, description, isPublic } = payload;
     const author = user.name;
-    const now = Date().replace("GMT+0900 (대한민국 표준시)", "");
-    let Urls = imgUrls.map((idx) => idx.url);
 
-    if (!Urls.length) {
-      Urls = undefined;
-    }
+    const Urls = imgUrls.map((idx) => idx.url);
 
     const board: Board = await this.boardRepository.create({
       title,
@@ -58,7 +54,6 @@ export class BoardService {
       description,
       isPublic,
       imgUrls: Urls,
-      whenCreated: now,
     });
 
     console.timeEnd("create board");
@@ -212,12 +207,8 @@ export class BoardService {
     const { title, description, isPublic } = payload;
     await this.isExistId(id);
     const author = user.name;
-    const now = Date().replace("GMT+0900 (대한민국 표준시)", "");
-    let Urls = imgUrls.map((idx) => idx.url);
 
-    if (!Urls.length) {
-      Urls = undefined;
-    }
+    const Urls = imgUrls.map((idx) => idx.url);
 
     await this.boardRepository.update(id, {
       title,
@@ -225,7 +216,6 @@ export class BoardService {
       description,
       isPublic,
       imgUrls: Urls,
-      whenUpdated: now,
     });
 
     console.timeEnd(`update board by ${id}`);
