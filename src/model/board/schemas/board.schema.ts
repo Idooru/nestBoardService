@@ -40,7 +40,6 @@ export class Board extends Document {
   isPublic: boolean;
 
   @IsArray()
-  @Prop({})
   imgUrls: Array<string | null>;
 
   readonly readOnlyDataMultiple: {

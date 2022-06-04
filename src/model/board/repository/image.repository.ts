@@ -3,12 +3,14 @@ import { Image } from "../schemas/image.schema";
 import { Model } from "mongoose";
 import { ImageUploadDto } from "../dto/image-upload.dto";
 import { ImageReturnDto } from "../dto/image-return.dto";
+import { Injectable } from "@nestjs/common";
 
+@Injectable()
 export class ImageRepository {
   constructor(@InjectModel("Image") readonly imageModel: Model<Image>) {}
 
   async uploadImg(image: ImageUploadDto): Promise<ImageReturnDto> {
-    const fileNameOnUrl = `http://localhost:8001/uploads/${image.fileName}`;
+    const fileNameOnUrl = `http://localhost:8001/media/${image.fileName}`;
 
     await this.imageModel.create({
       fileName: fileNameOnUrl,

@@ -10,8 +10,8 @@ export const GetImageCookies = createParamDecorator(
     const { ...images } = req.cookies;
     const imgUrls: Array<ImageReturnDto> = [];
 
-    for (const i in images) {
-      imgUrls.push({ name: i, url: images[i] });
+    for (const idx in images) {
+      imgUrls.push({ name: idx, url: images[idx] });
     }
 
     return imgUrls;

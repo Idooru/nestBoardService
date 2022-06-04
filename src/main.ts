@@ -16,7 +16,7 @@ async function bootstrap() {
   app.use(cookieParser());
 
   app.useStaticAssets(path.join(__dirname, "../uploads/image"), {
-    prefix: "/uploads",
+    prefix: "/media",
   });
 
   app.listen(port, () =>

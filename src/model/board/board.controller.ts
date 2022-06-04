@@ -62,7 +62,9 @@ export class BoardController {
     const json: Json = await this.boardService.uploadImg(files, user);
     const imgInfo = json.result;
 
-    imgInfo.forEach((idx: ImageReturnDto) => res.cookie(idx.name, idx.url));
+    imgInfo.forEach((idx: ImageReturnDto) =>
+      res.cookie(idx.name, idx.url, { httpOnly: true }),
+    );
 
     return res.status(201).json(json);
   }

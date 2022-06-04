@@ -22,7 +22,7 @@ import { JwtPayload } from "../auth/jwt/jwt-payload.interface";
 @Controller("/user")
 export class UserController {
   constructor(
-    readonly userService: UserService,
+    private readonly userService: UserService,
     private readonly authService: AuthService,
   ) {}
 

@@ -3,17 +3,22 @@ import {
   Catch,
   ArgumentsHost,
   HttpException,
+  Logger,
 } from "@nestjs/common";
 import { Response } from "express";
-import { HttpError } from "./http-error.interface";
+import { HttpError } from "../interfaces/http-error.interface";
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
+  private logger = new Logger("Error");
+
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const res = ctx.getResponse<Response>();
     const status = exception.getStatus();
     const error = exception.getResponse() as HttpError;
+
+    this.logger.log(error);
 
     res.status(status).json({
       error: {
