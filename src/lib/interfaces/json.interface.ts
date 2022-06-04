@@ -1,5 +1,5 @@
-export interface Json {
+export interface Json<T> {
   statusCode: number;
   message: string;
-  result?: any;
+  result?: T;
 }

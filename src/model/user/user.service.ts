@@ -7,6 +7,7 @@ import { JwtPayload } from "../auth/jwt/jwt-payload.interface";
 import { BoardRepository } from "../board/repository/board.repository";
 
 import * as bcrypt from "bcrypt";
+import { ReadOnlyUsersDto } from "./dto/read-only-users.dto";
 
 @Injectable()
 export class UserService {
@@ -15,7 +16,7 @@ export class UserService {
     private readonly boardRepository: BoardRepository,
   ) {}
 
-  async register(payload: UserRequestDto): Promise<Json> {
+  async register(payload: UserRequestDto): Promise<Json<ReadOnlyUsersDto>> {
     console.time("register");
 
     const { email, name, password } = payload;
@@ -40,16 +41,21 @@ export class UserService {
       password: hashed,
     });
 
+    const readOnlyData: ReadOnlyUsersDto = user.readOnlyData;
+
     console.timeEnd("register");
 
     return {
       statusCode: 201,
       message: "회원가입을 완료하였습니다.",
-      result: user.readOnlyData,
+      result: readOnlyData,
     };
   }
 
-  async setUser(payload: UserRequestDto, user: JwtPayload): Promise<Json> {
+  async setUser(
+    payload: UserRequestDto,
+    user: JwtPayload,
+  ): Promise<Json<null>> {
     console.time("set user");
 
     const id = user.id;
@@ -64,7 +70,7 @@ export class UserService {
     };
   }
 
-  async secession(user: JwtPayload): Promise<Json> {
+  async secession(user: JwtPayload): Promise<Json<null>> {
     console.time("secession");
 
     const id = user.id;

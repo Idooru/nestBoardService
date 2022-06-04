@@ -40,38 +40,24 @@ export class Board extends Document {
   isPublic: boolean;
 
   @IsArray()
-  imgUrls: Array<string | null>;
+  @Prop({
+    default: "no image",
+  })
+  imgUrls: Array<string>;
 
-  readonly readOnlyDataMultiple: {
-    id: string;
-    title: string;
-    author: string;
-    description: string;
-  };
-
-  readonly readOnlyDataSingle: {
+  readonly readOnlyData: {
     id: string;
     title: string;
     author: string;
     description: string;
     isPublic: boolean;
-    imgUrls: Array<string> | null;
+    imgUrls: Array<string>;
   };
 }
 
 export const BoardSchema = SchemaFactory.createForClass(Board);
 
-BoardSchema.virtual("readOnlyDataMultiple").get(function (this: Board) {
-  return {
-    id: this.id,
-    title: this.title,
-    author: this.author,
-    description: this.description,
-    imgUrl: this.imgUrls,
-  };
-});
-
-BoardSchema.virtual("readOnlyDataSingle").get(function (this: Board) {
+BoardSchema.virtual("readOnlyData").get(function (this: Board) {
   return {
     id: this.id,
     title: this.title,

@@ -39,7 +39,7 @@ export class UserController {
     @Body() payload: LoginDto,
     @Res() res: Response,
   ): Promise<ServerResponse> {
-    const json: Json = await this.authService.login(payload);
+    const json: Json<string> = await this.authService.login(payload);
     const jwtToken = json.result;
 
     return res
@@ -54,7 +54,7 @@ export class UserController {
     @GetDecodedJwt() user: JwtPayload,
     @Res() res: Response,
   ): Promise<ServerResponse> {
-    const json: Json = await this.authService.refreshToken(user);
+    const json: Json<string> = await this.authService.refreshToken(user);
     const jwtToken = json.result;
 
     return res
@@ -69,7 +69,7 @@ export class UserController {
     @GetDecodedJwt() user: JwtPayload,
     @Res() res: Response,
   ): ServerResponse {
-    const json: Json = {
+    const json: Json<{ id: string; email: string; name: string }> = {
       statusCode: 200,
       message: "본인 정보를 가져옵니다.",
       result: {
@@ -84,7 +84,7 @@ export class UserController {
   @UseGuards(IsloginGuard)
   @Delete("/logout")
   logout(@Res() res: Response): ServerResponse {
-    const json: Json = {
+    const json: Json<null> = {
       statusCode: 200,
       message: "로그아웃을 완료했습니다.",
     };

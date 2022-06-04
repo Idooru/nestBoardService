@@ -15,7 +15,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async login(payload: LoginDto): Promise<Json> {
+  async login(payload: LoginDto): Promise<Json<string>> {
     console.time("login");
 
     const { email, password } = payload;
@@ -48,7 +48,7 @@ export class AuthService {
     };
   }
 
-  async refreshToken(decryptedToken: JwtPayload): Promise<Json> {
+  async refreshToken(decryptedToken: JwtPayload): Promise<Json<string>> {
     console.time("refreshToken");
 
     const id: string = decryptedToken.id;

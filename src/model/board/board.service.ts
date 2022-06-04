@@ -11,6 +11,7 @@ import { JwtPayload } from "../auth/jwt/jwt-payload.interface";
 import { UserRepository } from "../user/user.repository";
 import { ImageRepository } from "./repository/image.repository";
 import { ImageReturnDto } from "./dto/image-return.dto";
+import { ReadOnlyBoardsDto } from "./dto/read-only-boards.dto";
 
 @Injectable()
 export class BoardService {
@@ -40,7 +41,7 @@ export class BoardService {
     payload: BoardRequestDto,
     imgUrls: Array<ImageReturnDto>,
     user: JwtPayload,
-  ): Promise<Json> {
+  ): Promise<Json<ReadOnlyBoardsDto>> {
     console.time("create board");
 
     const { title, description, isPublic } = payload;
@@ -55,23 +56,24 @@ export class BoardService {
       isPublic,
       imgUrls: Urls,
     });
+    const readOnlyBoard: ReadOnlyBoardsDto = board.readOnlyData;
 
     console.timeEnd("create board");
 
     return {
       statusCode: 201,
       message: "게시물이 생성되었습니다.",
-      result: board.readOnlyDataSingle,
+      result: readOnlyBoard,
     };
   }
 
   async uploadImg(
     files: Array<Express.Multer.File>,
     user: JwtPayload,
-  ): Promise<Json> {
+  ): Promise<Json<ImageReturnDto[]>> {
     console.time("upload image");
 
-    const imgUrls: Array<ImageReturnDto> = [];
+    const imgUrls: ImageReturnDto[] = [];
     const author = user.name;
 
     if (!files.length) {
@@ -111,18 +113,18 @@ export class BoardService {
     };
   }
 
-  async findAllBoards(): Promise<Json> {
+  async findAllBoards(): Promise<Json<ReadOnlyBoardsDto[]>> {
     console.time("find all board");
 
-    const boards: Board[] = await this.boardRepository.findBoards();
+    const boards: Array<Board> = await this.boardRepository.findBoards();
 
     if (!boards.length) {
       throw new NotFoundException("데이터베이스에 게시물이 하나도 없습니다.");
     }
 
-    const readOnlyBoards = boards
+    const readOnlyBoards: ReadOnlyBoardsDto[] = boards
       .filter((idx) => idx.isPublic)
-      .map((idx) => idx.readOnlyDataMultiple);
+      .map((idx) => idx.readOnlyData);
 
     console.timeEnd("find all boards");
 
@@ -133,22 +135,24 @@ export class BoardService {
     };
   }
 
-  async findOneBoardWithId(id: string): Promise<Json> {
+  async findOneBoardWithId(id: string): Promise<Json<ReadOnlyBoardsDto>> {
     console.time(`find one board with ${id}`);
 
     await this.isExistId(id);
     const board: Board = await this.boardRepository.findBoardWithId(id);
-
+    const readOnlyBoard: ReadOnlyBoardsDto = board.readOnlyData;
     console.timeEnd(`find one board with ${id}`);
 
     return {
       statusCode: 200,
       message: `${id}에 해당하는 게시물을 가져왔습니다.`,
-      result: board.readOnlyDataSingle,
+      result: readOnlyBoard,
     };
   }
 
-  async findAllBoardsWithAuthorName(name: string): Promise<Json> {
+  async findAllBoardsWithAuthorName(
+    name: string,
+  ): Promise<Json<ReadOnlyBoardsDto[]>> {
     console.time(`find boards with ${name}`);
 
     await this.isExistName(name);
@@ -160,9 +164,9 @@ export class BoardService {
       );
     }
 
-    const readOnlyBoards = boards
+    const readOnlyBoards: ReadOnlyBoardsDto[] = boards
       .filter((idx) => idx.isPublic)
-      .map((idx) => idx.readOnlyDataMultiple);
+      .map((idx) => idx.readOnlyData);
 
     console.timeEnd(`find boards with ${name}`);
 
@@ -173,7 +177,7 @@ export class BoardService {
     };
   }
 
-  async findMyBoards(user: JwtPayload): Promise<Json> {
+  async findMyBoards(user: JwtPayload): Promise<Json<ReadOnlyBoardsDto[]>> {
     console.time("find my boards");
 
     const name = user.name;
@@ -185,7 +189,9 @@ export class BoardService {
       );
     }
 
-    const readOnlyBoards = boards.map((idx) => idx.readOnlyDataSingle);
+    const readOnlyBoards: ReadOnlyBoardsDto[] = boards.map(
+      (idx) => idx.readOnlyData,
+    );
 
     console.timeEnd("find my boards");
 
@@ -201,7 +207,7 @@ export class BoardService {
     payload: BoardRequestDto,
     imgUrls: Array<ImageReturnDto>,
     user: JwtPayload,
-  ): Promise<Json> {
+  ): Promise<Json<void>> {
     console.time(`update board by ${id}`);
 
     const { title, description, isPublic } = payload;
@@ -226,7 +232,7 @@ export class BoardService {
     };
   }
 
-  async removeBoard(id: string): Promise<Json> {
+  async removeBoard(id: string): Promise<Json<void>> {
     console.time(`remove board by ${id}`);
 
     await this.isExistId(id);

@@ -23,6 +23,7 @@ import { MulterOperation } from "src/lib/multer/multer-operation";
 import { Json } from "src/lib/interfaces/json.interface";
 import { GetImageCookies } from "src/lib/decorators/get-image-cookies.decorator";
 import { ImageReturnDto } from "./dto/image-return.dto";
+import { ReadOnlyBoardsDto } from "./dto/read-only-boards.dto";
 
 @Controller("board")
 export class BoardController {
@@ -36,7 +37,7 @@ export class BoardController {
     @GetImageCookies() imgUrls: Array<ImageReturnDto>,
     @Res() res: Response,
   ): Promise<ServerResponse> {
-    const json: Json = await this.boardService.createBoard(
+    const json: Json<ReadOnlyBoardsDto> = await this.boardService.createBoard(
       payload,
       imgUrls,
       user,
@@ -59,7 +60,10 @@ export class BoardController {
   ): Promise<ServerResponse> {
     console.log(files);
 
-    const json: Json = await this.boardService.uploadImg(files, user);
+    const json: Json<ImageReturnDto[]> = await this.boardService.uploadImg(
+      files,
+      user,
+    );
     const imgInfo = json.result;
 
     imgInfo.forEach((idx: ImageReturnDto) =>
@@ -110,7 +114,7 @@ export class BoardController {
     @GetDecodedJwt() user: JwtPayload,
     @GetImageCookies() imgUrls: Array<ImageReturnDto>,
   ): Promise<ServerResponse> {
-    const json: Json = await this.boardService.updateBoard(
+    const json: Json<void> = await this.boardService.updateBoard(
       id,
       payload,
       imgUrls,
