@@ -1,8 +1,11 @@
-export class ReadOnlyBoardsDto {
-  id: string;
-  title: string;
-  author: string;
-  description: string;
-  isPublic: boolean;
-  imgUrls?: Array<string>;
-}
+import { PickType } from "@nestjs/mapped-types";
+import { Board } from "../schemas/board.schema";
+
+export class ReadOnlyBoardsDto extends PickType(Board, [
+  "id",
+  "title",
+  "author",
+  "description",
+  "isPublic",
+  "imgUrls",
+] as const) {}
