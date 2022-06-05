@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { Json } from "src/lib/interfaces/json.interface";
-import { CommentRepository } from "./comment.repository";
-import { ReadOnlyCommentsDto } from "./dto/read-only-comments.dto";
-import { Comment } from "./schemas/comment.schema";
-import { JwtPayload } from "../auth/jwt/jwt-payload.interface";
-import { BoardRepository } from "../board/repository/board.repository";
-import { CreateCommentDto } from "./dto/create-comment.dto";
+import { CommentRepository } from "../comment.repository";
+import { ReadOnlyCommentsDto } from "../dto/read-only-comments.dto";
+import { Comment } from "../schemas/comment.schema";
+import { JwtPayload } from "../../auth/jwt/jwt-payload.interface";
+import { BoardRepository } from "../../board/repository/board.repository";
+import { CreateCommentDto } from "../dto/create-comment.dto";
 
 @Injectable()
 export class CommentService {
@@ -43,7 +43,7 @@ export class CommentService {
     const found: boolean = await this.boardRepository.existBoardId(id);
 
     if (!found) {
-      throw new NotFoundException(`유효하지 않은 id입니다. id: {${id}}`);
+      throw new NotFoundException(`유효하지 않은 게시물 id입니다. id: {${id}}`);
     }
 
     const commentPayload: CreateCommentDto = {
@@ -55,8 +55,6 @@ export class CommentService {
     const comment: Comment = await this.commentRepository.create(
       commentPayload,
     );
-
-    await this.boardRepository.updateComment(id, comment);
 
     const readOnlyComment: ReadOnlyCommentsDto = comment.readOnlyData;
 

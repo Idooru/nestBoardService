@@ -7,12 +7,12 @@ import {
   Res,
   UseGuards,
 } from "@nestjs/common";
-import { CommentService } from "./comment.service";
+import { CommentService } from "../service/comment.service";
 import { ServerResponse } from "http";
 import { Response } from "express";
-import { IsloginGuard } from "../auth/jwt/islogin.guard";
+import { IsloginGuard } from "../../auth/jwt/islogin.guard";
 import { GetDecodedJwt } from "src/lib/decorators/user.decorator";
-import { JwtPayload } from "../auth/jwt/jwt-payload.interface";
+import { JwtPayload } from "../../auth/jwt/jwt-payload.interface";
 
 @Controller("comment")
 export class CommentController {
