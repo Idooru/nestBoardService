@@ -41,9 +41,15 @@ export class Board extends Document {
 
   @IsArray()
   @Prop({
-    default: "no image",
+    ref: "images",
   })
   imgUrls: Array<string>;
+
+  @IsArray()
+  @Prop({
+    ref: "comments",
+  })
+  comments: Array<string | Comment>;
 
   readonly readOnlyData: {
     id: string;
@@ -52,6 +58,7 @@ export class Board extends Document {
     description: string;
     isPublic: boolean;
     imgUrls: Array<string>;
+    comments: Array<string>;
   };
 }
 
@@ -65,5 +72,6 @@ BoardSchema.virtual("readOnlyData").get(function (this: Board) {
     description: this.description,
     isPublic: this.isPublic,
     imgUrl: this.imgUrls,
+    comments: this.comments,
   };
 });

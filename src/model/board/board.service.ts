@@ -42,8 +42,6 @@ export class BoardService {
     imgUrls: Array<ImageReturnDto>,
     user: JwtPayload,
   ): Promise<Json<ReadOnlyBoardsDto>> {
-    console.time("create board");
-
     const { title, description, isPublic } = payload;
     const author = user.name;
 
@@ -58,8 +56,6 @@ export class BoardService {
     });
     const readOnlyBoard: ReadOnlyBoardsDto = board.readOnlyData;
 
-    console.timeEnd("create board");
-
     return {
       statusCode: 201,
       message: "게시물이 생성되었습니다.",
@@ -71,8 +67,6 @@ export class BoardService {
     files: Array<Express.Multer.File>,
     user: JwtPayload,
   ): Promise<Json<ImageReturnDto[]>> {
-    console.time("upload image");
-
     const imgUrls: ImageReturnDto[] = [];
     const author = user.name;
 
@@ -104,8 +98,6 @@ export class BoardService {
       );
     }
 
-    console.timeEnd("upload image");
-
     return {
       statusCode: 201,
       message: "사진을 업로드 하였습니다.",
@@ -114,19 +106,15 @@ export class BoardService {
   }
 
   async findAllBoards(): Promise<Json<ReadOnlyBoardsDto[]>> {
-    console.time("find all board");
-
     const boards: Array<Board> = await this.boardRepository.findBoards();
 
     if (!boards.length) {
-      throw new NotFoundException("데이터베이스에 게시물이 하나도 없습니다.");
+      throw new NotFoundException("데이터베이스에 게시물이 없습니다.");
     }
 
     const readOnlyBoards: ReadOnlyBoardsDto[] = boards
       .filter((idx) => idx.isPublic)
       .map((idx) => idx.readOnlyData);
-
-    console.timeEnd("find all boards");
 
     return {
       statusCode: 200,
@@ -136,12 +124,9 @@ export class BoardService {
   }
 
   async findOneBoardWithId(id: string): Promise<Json<ReadOnlyBoardsDto>> {
-    console.time(`find one board with ${id}`);
-
     await this.isExistId(id);
     const board: Board = await this.boardRepository.findBoardWithId(id);
     const readOnlyBoard: ReadOnlyBoardsDto = board.readOnlyData;
-    console.timeEnd(`find one board with ${id}`);
 
     return {
       statusCode: 200,
@@ -153,8 +138,6 @@ export class BoardService {
   async findAllBoardsWithAuthorName(
     name: string,
   ): Promise<Json<ReadOnlyBoardsDto[]>> {
-    console.time(`find boards with ${name}`);
-
     await this.isExistName(name);
     const boards: Board[] = await this.boardRepository.findBoardsWithName(name);
 
@@ -168,8 +151,6 @@ export class BoardService {
       .filter((idx) => idx.isPublic)
       .map((idx) => idx.readOnlyData);
 
-    console.timeEnd(`find boards with ${name}`);
-
     return {
       statusCode: 200,
       message: `${name}님이 작성한 게시물을 가져왔습니다.`,
@@ -178,8 +159,6 @@ export class BoardService {
   }
 
   async findMyBoards(user: JwtPayload): Promise<Json<ReadOnlyBoardsDto[]>> {
-    console.time("find my boards");
-
     const name = user.name;
     const boards: Board[] = await this.boardRepository.findBoardsWithName(name);
 
@@ -192,8 +171,6 @@ export class BoardService {
     const readOnlyBoards: ReadOnlyBoardsDto[] = boards.map(
       (idx) => idx.readOnlyData,
     );
-
-    console.timeEnd("find my boards");
 
     return {
       statusCode: 200,
@@ -208,8 +185,6 @@ export class BoardService {
     imgUrls: Array<ImageReturnDto>,
     user: JwtPayload,
   ): Promise<Json<void>> {
-    console.time(`update board by ${id}`);
-
     const { title, description, isPublic } = payload;
     await this.isExistId(id);
     const author = user.name;
@@ -224,8 +199,6 @@ export class BoardService {
       imgUrls: Urls,
     });
 
-    console.timeEnd(`update board by ${id}`);
-
     return {
       statusCode: 201,
       message: `${id}에 해당하는 게시물을 수정하였습니다.`,
@@ -233,12 +206,8 @@ export class BoardService {
   }
 
   async removeBoard(id: string): Promise<Json<void>> {
-    console.time(`remove board by ${id}`);
-
     await this.isExistId(id);
     await this.boardRepository.delete(id);
-
-    console.timeEnd(`remove board by ${id}`);
 
     return {
       statusCode: 200,

@@ -6,6 +6,7 @@ import { UserModule } from "./model/user/user.module";
 import { ConfigModule } from "@nestjs/config";
 import { MongooseModule } from "@nestjs/mongoose";
 import { LoggerMiddleware } from "./lib/middlewares/logger.middleware";
+import { CommentModule } from "./model/comment/comment.module";
 
 import * as mongoose from "mongoose";
 
@@ -21,6 +22,7 @@ import * as mongoose from "mongoose";
     AuthModule,
     BoardModule,
     UserModule,
+    CommentModule,
   ],
 })
 export class AppModule implements NestModule {

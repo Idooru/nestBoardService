@@ -5,9 +5,9 @@ import { Json } from "src/lib/interfaces/json.interface";
 import { User } from "./schemas/user.schema";
 import { JwtPayload } from "../auth/jwt/jwt-payload.interface";
 import { BoardRepository } from "../board/repository/board.repository";
+import { ReadOnlyUsersDto } from "./dto/read-only-users.dto";
 
 import * as bcrypt from "bcrypt";
-import { ReadOnlyUsersDto } from "./dto/read-only-users.dto";
 
 @Injectable()
 export class UserService {
@@ -17,8 +17,6 @@ export class UserService {
   ) {}
 
   async register(payload: UserRequestDto): Promise<Json<ReadOnlyUsersDto>> {
-    console.time("register");
-
     const { email, name, password } = payload;
 
     const isEmailExist: boolean = await this.userRepository.existUserEmail(
@@ -43,8 +41,6 @@ export class UserService {
 
     const readOnlyData: ReadOnlyUsersDto = user.readOnlyData;
 
-    console.timeEnd("register");
-
     return {
       statusCode: 201,
       message: "회원가입을 완료하였습니다.",
@@ -56,13 +52,9 @@ export class UserService {
     payload: UserRequestDto,
     user: JwtPayload,
   ): Promise<Json<null>> {
-    console.time("set user");
-
     const id = user.id;
 
     await this.userRepository.setUser(payload, id);
-
-    console.timeEnd("set user");
 
     return {
       statusCode: 200,
@@ -71,15 +63,12 @@ export class UserService {
   }
 
   async secession(user: JwtPayload): Promise<Json<null>> {
-    console.time("secession");
-
     const id = user.id;
     const name = user.name;
 
     await this.userRepository.secession(id);
     await this.boardRepository.deleteBoards(name);
 
-    console.timeEnd("secession");
     return {
       statusCode: 200,
       message: "회원 탈퇴를 완료하였습니다.",

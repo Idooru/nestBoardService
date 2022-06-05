@@ -4,6 +4,7 @@ import { Board } from "../schemas/board.schema";
 import { Model } from "mongoose";
 import { BoardCreateDto } from "../dto/board-create.dto";
 import { BoardUpdateDto } from "../dto/board-update-dto";
+import { Comment } from "src/model/comment/schemas/comment.schema";
 
 @Injectable()
 export class BoardRepository {
@@ -43,5 +44,12 @@ export class BoardRepository {
 
   async deleteBoards(name: string): Promise<void> {
     await this.boardModel.deleteMany().where("author").equals(name);
+  }
+
+  async updateComment(id: string, comment: Comment): Promise<void> {
+    await this.boardModel
+      .updateOne({ _id: id })
+      .where("comments")
+      .equals(comment);
   }
 }

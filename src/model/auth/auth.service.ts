@@ -16,8 +16,6 @@ export class AuthService {
   ) {}
 
   async login(payload: LoginDto): Promise<Json<string>> {
-    console.time("login");
-
     const { email, password } = payload;
     const user: User = await this.userRepository.findUserByEmail(email);
 
@@ -39,8 +37,6 @@ export class AuthService {
 
     const jwtToken: string = this.jwtService.sign(dataToBeJwt);
 
-    console.timeEnd("login");
-
     return {
       statusCode: 200,
       message: "로그인에 성공하였습니다.",
@@ -49,8 +45,6 @@ export class AuthService {
   }
 
   async refreshToken(decryptedToken: JwtPayload): Promise<Json<string>> {
-    console.time("refreshToken");
-
     const id: string = decryptedToken.id;
     const user: User = await this.userRepository.findUserById(id);
 
@@ -59,8 +53,6 @@ export class AuthService {
 
     const dataToBeJwt: JwtPayload = { id, email, name };
     const jwtToken: string = this.jwtService.sign(dataToBeJwt);
-
-    console.timeEnd("refreshToken");
 
     return {
       statusCode: 200,
