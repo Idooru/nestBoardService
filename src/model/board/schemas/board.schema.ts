@@ -1,6 +1,7 @@
 import { SchemaOptions, Document } from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { IsArray, IsBoolean, IsNotEmpty, IsString } from "class-validator";
+import { CreateCommentDto } from "../../comment/dto/create-comment.dto";
 
 const option: SchemaOptions = {
   timestamps: true,
@@ -42,14 +43,16 @@ export class Board extends Document {
   @IsArray()
   @Prop({
     ref: "images",
+    default: "no images",
   })
   imgUrls: Array<string>;
 
   @IsArray()
   @Prop({
     ref: "comments",
+    default: "no comments",
   })
-  comments: Array<string | Comment>;
+  comments: Array<CreateCommentDto>;
 
   readonly readOnlyData: {
     id: string;
@@ -58,7 +61,7 @@ export class Board extends Document {
     description: string;
     isPublic: boolean;
     imgUrls: Array<string>;
-    comments: Array<string>;
+    comments: Array<string | CreateCommentDto>;
   };
 }
 

@@ -45,14 +45,15 @@ export class BoardService {
     const { title, description, isPublic } = payload;
     const author = user.name;
 
-    const Urls = imgUrls.map((idx) => idx.url);
+    const Urls: Array<string> = imgUrls.map((idx) => idx.url);
+    const undefinedOrUrls = !Urls.length ? undefined : Urls;
 
     const board: Board = await this.boardRepository.create({
       title,
       author,
       description,
       isPublic,
-      imgUrls: Urls,
+      imgUrls: undefinedOrUrls,
     });
     const readOnlyBoard: ReadOnlyBoardsDto = board.readOnlyData;
 
@@ -189,14 +190,15 @@ export class BoardService {
     await this.isExistId(id);
     const author = user.name;
 
-    const Urls = imgUrls.map((idx) => idx.url);
+    const Urls: Array<string> = imgUrls.map((idx) => idx.url);
+    const undefinedOrUrls = !Urls.length ? undefined : Urls;
 
     await this.boardRepository.update(id, {
       title,
       author,
       description,
       isPublic,
-      imgUrls: Urls,
+      imgUrls: undefinedOrUrls,
     });
 
     return {
