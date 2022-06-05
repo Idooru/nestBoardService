@@ -45,7 +45,7 @@ export class BoardService {
     const { title, description, isPublic } = payload;
     const author = user.name;
 
-    const Urls: Array<string> = imgUrls.map((idx) => idx.url);
+    const Urls = imgUrls.map((idx) => idx.url);
     const undefinedOrUrls = !Urls.length ? undefined : Urls;
 
     const board: Board = await this.boardRepository.create({
@@ -190,7 +190,7 @@ export class BoardService {
     await this.isExistId(id);
     const author = user.name;
 
-    const Urls: Array<string> = imgUrls.map((idx) => idx.url);
+    const Urls = imgUrls.map((idx) => idx.url);
     const undefinedOrUrls = !Urls.length ? undefined : Urls;
 
     await this.boardRepository.update(id, {
