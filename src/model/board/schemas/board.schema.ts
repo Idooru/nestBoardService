@@ -1,7 +1,7 @@
 import { SchemaOptions, Document } from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { IsArray, IsBoolean, IsNotEmpty, IsString } from "class-validator";
-import { CreateCommentDto } from "../../comment/dto/create-comment.dto";
+import { Comment } from "src/model/comment/schemas/comment.schema";
 
 const option: SchemaOptions = {
   timestamps: true,
@@ -46,12 +46,6 @@ export class Board extends Document {
   })
   imgUrls: Array<string>;
 
-  @IsArray()
-  @Prop({
-    ref: "comments",
-  })
-  comments: Array<CreateCommentDto>;
-
   readonly readOnlyData: {
     id: string;
     title: string;
@@ -59,13 +53,15 @@ export class Board extends Document {
     description: string;
     isPublic: boolean;
     imgUrls: Array<string>;
-    comments: Array<string | CreateCommentDto>;
+    comments: Array<Comment>;
   };
+
+  readonly comments: Array<Comment>;
 }
 
-export const BoardSchema = SchemaFactory.createForClass(Board);
+const _BoardSchema = SchemaFactory.createForClass(Board);
 
-BoardSchema.virtual("readOnlyData").get(function (this: Board) {
+_BoardSchema.virtual("readOnlyData").get(function (this: Board) {
   return {
     id: this.id,
     title: this.title,
@@ -76,3 +72,13 @@ BoardSchema.virtual("readOnlyData").get(function (this: Board) {
     comments: this.comments,
   };
 });
+
+_BoardSchema.virtual("CommentList", {
+  ref: "comments",
+  localField: "id",
+  foreignField: "whichBoard",
+});
+_BoardSchema.set("toObject", { virtuals: true });
+_BoardSchema.set("toJSON", { virtuals: true });
+
+export const BoardSchema = _BoardSchema;

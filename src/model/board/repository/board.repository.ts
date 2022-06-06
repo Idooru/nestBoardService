@@ -4,13 +4,19 @@ import { Board } from "../schemas/board.schema";
 import { Model } from "mongoose";
 import { BoardCreateDto } from "../dto/board-create.dto";
 import { BoardUpdateDto } from "../dto/board-update-dto";
-import { Comment } from "src/model/comment/schemas/comment.schema";
+import { Types } from "mongoose";
+import { CommentSchema } from "src/model/comment/schemas/comment.schema";
+
+import * as mongoose from "mongoose";
 
 @Injectable()
 export class BoardRepository {
-  constructor(@InjectModel("Board") readonly boardModel: Model<Board>) {}
+  constructor(
+    @InjectModel("Board") readonly boardModel: Model<Board>,
+    @InjectModel("Comment") readonly commentModel: Model<Comment>,
+  ) {}
 
-  async findBoardWithId(id: string): Promise<Board> {
+  async findBoardWithId(id: string | Types.ObjectId): Promise<Board> {
     return await this.boardModel.findById(id);
   }
 
@@ -19,10 +25,11 @@ export class BoardRepository {
   }
 
   async findBoards(): Promise<Board[]> {
-    return await this.boardModel.find({});
+    const CommentModel = mongoose.model("comments", CommentSchema);
+    return await this.boardModel.find({}).populate("CommentList", CommentModel);
   }
 
-  async existBoardId(id: string): Promise<boolean> {
+  async existBoardId(id: string | Types.ObjectId): Promise<boolean> {
     return await this.boardModel.exists({ _id: id });
   }
 
@@ -34,23 +41,18 @@ export class BoardRepository {
     return await this.boardModel.create(board);
   }
 
-  async update(id: string, board: BoardUpdateDto): Promise<void> {
+  async update(
+    id: string | Types.ObjectId,
+    board: BoardUpdateDto,
+  ): Promise<void> {
     await this.boardModel.updateOne({ _id: id }, board);
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: string | Types.ObjectId): Promise<void> {
     await this.boardModel.deleteOne({ _id: id });
   }
 
   async deleteBoards(name: string): Promise<void> {
     await this.boardModel.deleteMany().where("author").equals(name);
-  }
-
-  async updateComment(id: string, comment: Comment): Promise<void> {
-    await this.boardModel.updateOne(
-      { _id: id },
-      { $set: { comments: comment } },
-      { new: true },
-    );
   }
 }

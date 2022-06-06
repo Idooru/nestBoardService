@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Comment } from "./schemas/comment.schema";
 import { Model } from "mongoose";
-import { CreateCommentDto } from "./dto/create-comment.dto";
+import { CommentCreateDto } from "./dto/comment-create.dto";
 
 @Injectable()
 export class CommentRepository {
@@ -12,7 +12,7 @@ export class CommentRepository {
     return await this.commentModel.find({});
   }
 
-  async create(commentPayload: CreateCommentDto): Promise<Comment> {
+  async create(commentPayload: CommentCreateDto): Promise<Comment> {
     return await this.commentModel.create(commentPayload);
   }
 }

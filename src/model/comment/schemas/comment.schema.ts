@@ -1,6 +1,6 @@
 import { Prop, SchemaFactory, SchemaOptions, Schema } from "@nestjs/mongoose";
 import { IsNotEmpty, IsString, MaxLength } from "class-validator";
-import { Document } from "mongoose";
+import { Document, Types } from "mongoose";
 
 const option: SchemaOptions = {
   timestamps: true,
@@ -10,12 +10,12 @@ const option: SchemaOptions = {
 @Schema(option)
 export class Comment extends Document {
   @IsNotEmpty()
-  @IsString()
   @Prop({
-    ref: "users",
+    type: Types.ObjectId,
     required: true,
+    ref: "users",
   })
-  commenter: string;
+  commenter: Types.ObjectId;
 
   @IsNotEmpty()
   @IsString()
@@ -25,18 +25,26 @@ export class Comment extends Document {
   })
   content: string;
 
+  // @IsNotEmpty()
+  // @IsPositive()
+  // @Prop({
+  //   default: 0,
+  // })
+  // likeCount: number;
+
   @IsNotEmpty()
-  @IsString()
   @Prop({
-    ref: "boards",
+    type: Types.ObjectId,
     required: true,
+    ref: "boards",
   })
-  whatBoard: string;
+  whichBoard: Types.ObjectId;
 
   readonly readOnlyData: {
     id: string;
-    commenter: string;
+    commenter: Types.ObjectId;
     content: string;
+    whichBoard: Types.ObjectId;
   };
 }
 
@@ -47,5 +55,6 @@ CommentSchema.virtual("readOnlyData").get(function (this: Comment) {
     id: this.id,
     commenter: this.commenter,
     content: this.content,
+    whichBoard: this.whichBoard,
   };
 });

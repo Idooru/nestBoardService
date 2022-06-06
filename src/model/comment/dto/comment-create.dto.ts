@@ -1,8 +1,8 @@
 import { PickType } from "@nestjs/mapped-types";
 import { Comment } from "../schemas/comment.schema";
 
-export class CreateCommentDto extends PickType(Comment, [
+export class CommentCreateDto extends PickType(Comment, [
   "commenter",
   "content",
-  "whatBoard",
+  "whichBoard",
 ] as const) {}

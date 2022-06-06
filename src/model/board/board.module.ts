@@ -8,15 +8,19 @@ import { AuthModule } from "../auth/auth.module";
 import { UserModule } from "../user/user.module";
 import { ImageRepository } from "./repository/image.repository";
 import { Image, ImageSchema } from "./schemas/image.schema";
+import { Comment, CommentSchema } from "../comment/schemas/comment.schema";
+import { CommentModule } from "../comment/comment.module";
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Board.name, schema: BoardSchema },
       { name: Image.name, schema: ImageSchema },
+      { name: Comment.name, schema: CommentSchema },
     ]),
     forwardRef(() => AuthModule),
     forwardRef(() => UserModule),
+    forwardRef(() => CommentModule),
   ],
   controllers: [BoardController],
   providers: [BoardService, BoardRepository, ImageRepository],

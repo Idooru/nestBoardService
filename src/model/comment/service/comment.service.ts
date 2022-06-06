@@ -5,13 +5,16 @@ import { ReadOnlyCommentsDto } from "../dto/read-only-comments.dto";
 import { Comment } from "../schemas/comment.schema";
 import { JwtPayload } from "../../auth/jwt/jwt-payload.interface";
 import { BoardRepository } from "../../board/repository/board.repository";
-import { CreateCommentDto } from "../dto/create-comment.dto";
+import { CommentCreateDto } from "../dto/comment-create.dto";
+import { UserRepository } from "../../user/user.repository";
+import { Types } from "mongoose";
 
 @Injectable()
 export class CommentService {
   constructor(
     private readonly commentRepository: CommentRepository,
     private readonly boardRepository: BoardRepository,
+    private readonly userRepository: UserRepository,
   ) {}
 
   async findAllComments(): Promise<Json<ReadOnlyCommentsDto[]>> {
@@ -35,10 +38,11 @@ export class CommentService {
 
   async createComment(
     payload: { content: string },
-    id: string,
+    id: Types.ObjectId,
     user: JwtPayload,
   ): Promise<Json<ReadOnlyCommentsDto>> {
     const { content } = payload;
+    const email = user.email;
 
     const found: boolean = await this.boardRepository.existBoardId(id);
 
@@ -46,17 +50,17 @@ export class CommentService {
       throw new NotFoundException(`유효하지 않은 게시물 id입니다. id: {${id}}`);
     }
 
-    const commentPayload: CreateCommentDto = {
-      commenter: user.name,
+    const validateCommenter = await this.userRepository.findUserByEmail(email);
+
+    const commentPayload: CommentCreateDto = {
+      commenter: validateCommenter._id,
       content,
-      whatBoard: id,
+      whichBoard: id,
     };
 
     const comment: Comment = await this.commentRepository.create(
       commentPayload,
     );
-
-    await this.boardRepository.updateComment(id, comment);
 
     const readOnlyComment: ReadOnlyCommentsDto = comment.readOnlyData;
 

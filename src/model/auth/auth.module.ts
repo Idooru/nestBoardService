@@ -5,6 +5,7 @@ import { AuthService } from "./auth.service";
 import { UserModule } from "../user/user.module";
 import { JwtStrategy } from "./jwt/jwt.starategy";
 import { ConfigModule } from "@nestjs/config";
+import { BoardModule } from "../board/board.module";
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { ConfigModule } from "@nestjs/config";
       signOptions: { expiresIn: "3h" },
     }),
     forwardRef(() => UserModule),
+    forwardRef(() => BoardModule),
   ],
   providers: [AuthService, JwtStrategy],
   exports: [AuthService],

@@ -13,6 +13,7 @@ import { Response } from "express";
 import { IsloginGuard } from "../../../lib/guards/islogin.guard";
 import { GetDecodedJwt } from "src/lib/decorators/user.decorator";
 import { JwtPayload } from "../../auth/jwt/jwt-payload.interface";
+import { Types } from "mongoose";
 
 @Controller("comment")
 export class CommentController {
@@ -26,7 +27,7 @@ export class CommentController {
   @UseGuards(IsloginGuard)
   @Post("/:id/board")
   async createComment(
-    @Param("id") id: string,
+    @Param("id") id: Types.ObjectId,
     @Body() payload: { content: string },
     @GetDecodedJwt() user: JwtPayload,
     @Res() res: Response,
