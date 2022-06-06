@@ -44,7 +44,9 @@ export class AuthService {
     };
   }
 
-  async refreshToken(decryptedToken: JwtPayload): Promise<Json<string>> {
+  async refreshTokenWhenLogin(
+    decryptedToken: JwtPayload,
+  ): Promise<Json<string>> {
     const id: string = decryptedToken.id;
     const user: User = await this.userRepository.findUserById(id);
 
@@ -59,5 +61,9 @@ export class AuthService {
       message: "토큰을 재발급합니다.",
       result: jwtToken,
     };
+  }
+
+  async refreshTokenWhenSetUser(dataToBeJwt: JwtPayload): Promise<string> {
+    return this.jwtService.sign(dataToBeJwt);
   }
 }

@@ -5,5 +5,4 @@ export class ReadOnlyCommentsDto extends PickType(Comment, [
   "id",
   "commenter",
   "content",
-  "whatBoard",
 ] as const) {}

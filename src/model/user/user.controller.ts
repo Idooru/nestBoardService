@@ -54,7 +54,9 @@ export class UserController {
     @GetDecodedJwt() user: JwtPayload,
     @Res() res: Response,
   ): Promise<ServerResponse> {
-    const json: Json<string> = await this.authService.refreshToken(user);
+    const json: Json<string> = await this.authService.refreshTokenWhenLogin(
+      user,
+    );
     const jwtToken = json.result;
 
     return res
@@ -101,7 +103,13 @@ export class UserController {
     @GetDecodedJwt() user: JwtPayload,
     @Res() res: Response,
   ): Promise<ServerResponse> {
-    return res.status(200).json(await this.userService.setUser(payload, user));
+    const json: Json<string> = await this.userService.setUser(payload, user);
+    const jwtToken = json.result;
+
+    return res
+      .status(200)
+      .cookie("JWT_COOKIE", jwtToken, { httpOnly: true })
+      .json(json);
   }
 
   @UseGuards(IsloginGuard)

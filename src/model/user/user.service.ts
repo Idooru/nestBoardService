@@ -6,6 +6,7 @@ import { User } from "./schemas/user.schema";
 import { JwtPayload } from "../auth/jwt/jwt-payload.interface";
 import { BoardRepository } from "../board/repository/board.repository";
 import { ReadOnlyUsersDto } from "./dto/read-only-users.dto";
+import { AuthService } from "../auth/auth.service";
 
 import * as bcrypt from "bcrypt";
 
@@ -14,6 +15,7 @@ export class UserService {
   constructor(
     private readonly userRepository: UserRepository,
     private readonly boardRepository: BoardRepository,
+    private readonly authService: AuthService,
   ) {}
 
   async register(payload: UserRequestDto): Promise<Json<ReadOnlyUsersDto>> {
@@ -51,14 +53,32 @@ export class UserService {
   async setUser(
     payload: UserRequestDto,
     user: JwtPayload,
-  ): Promise<Json<null>> {
+  ): Promise<Json<string>> {
     const id = user.id;
 
-    await this.userRepository.setUser(payload, id);
+    const hashed = await bcrypt.hash(payload.password, 10);
+
+    const changedPayload = {
+      email: payload.email,
+      name: payload.name,
+      password: hashed,
+    };
+
+    await this.userRepository.setUser(changedPayload, id);
+
+    const email = payload.email;
+    const name = payload.name;
+
+    const dataToBeJwt: JwtPayload = { id, email, name };
+
+    const jwtToken = await this.authService.refreshTokenWhenSetUser(
+      dataToBeJwt,
+    );
 
     return {
       statusCode: 200,
-      message: "사용자 정보를 수정하였습니다.",
+      message: "사용자 정보를 수정하고 토큰을 재발급합니다.",
+      result: jwtToken,
     };
   }
 

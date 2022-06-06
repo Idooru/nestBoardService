@@ -37,7 +37,6 @@ export class Comment extends Document {
     id: string;
     commenter: string;
     content: string;
-    whatBoard: string;
   };
 }
 
@@ -48,6 +47,5 @@ CommentSchema.virtual("readOnlyData").get(function (this: Comment) {
     id: this.id,
     commenter: this.commenter,
     content: this.content,
-    whatBoard: this.whatBoard,
   };
 });

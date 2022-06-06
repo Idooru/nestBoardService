@@ -43,14 +43,12 @@ export class Board extends Document {
   @IsArray()
   @Prop({
     ref: "images",
-    default: "no images",
   })
   imgUrls: Array<string>;
 
   @IsArray()
   @Prop({
     ref: "comments",
-    default: "no comments",
   })
   comments: Array<CreateCommentDto>;
 
