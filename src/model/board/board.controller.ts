@@ -15,7 +15,7 @@ import { BoardService } from "./board.service";
 import { BoardRequestDto } from "./dto/board-request.dto";
 import { Response } from "express";
 import { ServerResponse } from "http";
-import { IsloginGuard } from "../auth/jwt/islogin.guard";
+import { IsloginGuard } from "../../lib/guards/islogin.guard";
 import { GetDecodedJwt } from "src/lib/decorators/user.decorator";
 import { JwtPayload } from "../auth/jwt/jwt-payload.interface";
 import { FilesInterceptor } from "@nestjs/platform-express";
@@ -128,7 +128,11 @@ export class BoardController {
 
   @UseGuards(IsloginGuard)
   @Delete(":id/id")
-  async removeBoard(@Param("id") id: string, @Res() res: Response) {
-    return res.status(200).json(await this.boardService.removeBoard(id));
+  async removeBoard(
+    @Param("id") id: string,
+    @GetDecodedJwt() user: JwtPayload,
+    @Res() res: Response,
+  ) {
+    return res.status(200).json(await this.boardService.removeBoard(id, user));
   }
 }

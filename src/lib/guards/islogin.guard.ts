@@ -2,11 +2,9 @@ import { JwtModuleOptions, JwtService } from "@nestjs/jwt";
 import {
   CanActivate,
   ExecutionContext,
-  Injectable,
   UnauthorizedException,
 } from "@nestjs/common";
 
-@Injectable()
 export class IsloginGuard implements CanActivate {
   private options: JwtModuleOptions = {
     secret: process.env.JWT_SECRET,

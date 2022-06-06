@@ -15,7 +15,7 @@ import { AuthService } from "../auth/auth.service";
 import { LoginDto } from "../auth/dto/login.dto";
 import { UserRequestDto } from "./dto/user-request.dto";
 import { UserService } from "./user.service";
-import { IsloginGuard } from "../auth/jwt/islogin.guard";
+import { IsloginGuard } from "../../lib/guards/islogin.guard";
 import { GetDecodedJwt } from "src/lib/decorators/user.decorator";
 import { JwtPayload } from "../auth/jwt/jwt-payload.interface";
 
@@ -83,10 +83,13 @@ export class UserController {
 
   @UseGuards(IsloginGuard)
   @Delete("/logout")
-  logout(@Res() res: Response): ServerResponse {
+  logout(
+    @Res() res: Response,
+    @GetDecodedJwt() user: JwtPayload,
+  ): ServerResponse {
     const json: Json<null> = {
       statusCode: 200,
-      message: "로그아웃을 완료했습니다.",
+      message: `${user.email}계정으로 로그아웃을 완료했습니다.`,
     };
     return res.status(200).clearCookie("JWT_COOKIE").json(json);
   }

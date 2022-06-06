@@ -2,6 +2,7 @@ import {
   Injectable,
   BadRequestException,
   NotFoundException,
+  UnauthorizedException,
 } from "@nestjs/common";
 import { BoardRequestDto } from "./dto/board-request.dto";
 import { Json } from "../../lib/interfaces/json.interface";
@@ -190,6 +191,20 @@ export class BoardService {
     await this.isExistId(id);
     const author = user.name;
 
+    const boards: Board[] = await this.boardRepository.findBoardsWithName(
+      author,
+    );
+
+    const found = boards
+      .map((idx) => idx.readOnlyData)
+      .find((idx) => idx.author === author);
+
+    if (!found) {
+      throw new UnauthorizedException(
+        "본인 게시물 이외에는 수정 할 수 없습니다.",
+      );
+    }
+
     const Urls = imgUrls.map((idx) => idx.url);
     const undefinedOrUrls = !Urls.length ? undefined : Urls;
 
@@ -207,8 +222,25 @@ export class BoardService {
     };
   }
 
-  async removeBoard(id: string): Promise<Json<void>> {
+  async removeBoard(id: string, user: JwtPayload): Promise<Json<void>> {
     await this.isExistId(id);
+
+    const author = user.name;
+
+    const boards: Board[] = await this.boardRepository.findBoardsWithName(
+      author,
+    );
+
+    const found = boards
+      .map((idx) => idx.readOnlyData)
+      .find((idx) => idx.author === author);
+
+    if (!found) {
+      throw new UnauthorizedException(
+        "본인 게시물 이외에는 삭제 할 수 없습니다.",
+      );
+    }
+
     await this.boardRepository.delete(id);
 
     return {

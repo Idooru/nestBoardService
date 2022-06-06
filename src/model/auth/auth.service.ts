@@ -39,7 +39,7 @@ export class AuthService {
 
     return {
       statusCode: 200,
-      message: "로그인에 성공하였습니다.",
+      message: `${user.email}계정으로 로그인에 성공하였습니다.`,
       result: jwtToken,
     };
   }

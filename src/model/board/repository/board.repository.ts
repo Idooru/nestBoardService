@@ -47,9 +47,10 @@ export class BoardRepository {
   }
 
   async updateComment(id: string, comment: Comment): Promise<void> {
-    await this.boardModel
-      .updateOne({ _id: id })
-      .where("comments")
-      .equals(comment);
+    await this.boardModel.updateOne(
+      { _id: id },
+      { $set: { comments: comment } },
+      { new: true },
+    );
   }
 }

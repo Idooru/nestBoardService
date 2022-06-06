@@ -56,6 +56,8 @@ export class CommentService {
       commentPayload,
     );
 
+    await this.boardRepository.updateComment(id, comment);
+
     const readOnlyComment: ReadOnlyCommentsDto = comment.readOnlyData;
 
     return {
