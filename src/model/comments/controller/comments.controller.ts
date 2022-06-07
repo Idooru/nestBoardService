@@ -7,7 +7,7 @@ import {
   Res,
   UseGuards,
 } from "@nestjs/common";
-import { CommentService } from "../service/comment.service";
+import { CommentsService } from "../service/comment.service";
 import { ServerResponse } from "http";
 import { Response } from "express";
 import { IsloginGuard } from "../../../lib/guards/islogin.guard";
@@ -15,9 +15,9 @@ import { GetDecodedJwt } from "src/lib/decorators/user.decorator";
 import { JwtPayload } from "../../auth/jwt/jwt-payload.interface";
 import { Types } from "mongoose";
 
-@Controller("comment")
-export class CommentController {
-  constructor(private readonly commentService: CommentService) {}
+@Controller("Comments")
+export class CommentsController {
+  constructor(private readonly commentService: CommentsService) {}
 
   @Get()
   async findAllComments(@Res() res: Response): Promise<ServerResponse> {

@@ -5,19 +5,19 @@ import { Model } from "mongoose";
 import { BoardCreateDto } from "../dto/board-create.dto";
 import { BoardUpdateDto } from "../dto/board-update-dto";
 import { Types } from "mongoose";
-import { CommentSchema } from "src/model/comment/schemas/comment.schema";
+import { CommentsSchema } from "src/model/comments/schemas/comments.schema";
 
 import * as mongoose from "mongoose";
 
 @Injectable()
 export class BoardRepository {
-  constructor(
-    @InjectModel("Board") readonly boardModel: Model<Board>,
-    @InjectModel("Comment") readonly commentModel: Model<Comment>,
-  ) {}
+  constructor(@InjectModel(Board.name) readonly boardModel: Model<Board>) {}
 
   async findBoardWithId(id: string | Types.ObjectId): Promise<Board> {
-    return await this.boardModel.findById(id);
+    const CommentModel = mongoose.model("comments", CommentsSchema);
+    return await this.boardModel
+      .findById(id)
+      .populate("commentList", CommentModel);
   }
 
   async findBoardsWithName(name: string): Promise<Board[]> {
@@ -25,7 +25,7 @@ export class BoardRepository {
   }
 
   async findBoards(): Promise<Board[]> {
-    const CommentModel = mongoose.model("comments", CommentSchema);
+    const CommentModel = mongoose.model("comments", CommentsSchema);
     return await this.boardModel.find().populate("commentList", CommentModel);
   }
 

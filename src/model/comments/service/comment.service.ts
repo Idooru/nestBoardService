@@ -1,16 +1,16 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { Json } from "src/lib/interfaces/json.interface";
-import { CommentRepository } from "../comment.repository";
+import { CommentRepository } from "../comments.repository";
 import { ReadOnlyCommentsDto } from "../dto/read-only-comments.dto";
-import { Comment } from "../schemas/comment.schema";
+import { Comments } from "../schemas/comments.schema";
 import { JwtPayload } from "../../auth/jwt/jwt-payload.interface";
 import { BoardRepository } from "../../board/repository/board.repository";
-import { CommentCreateDto } from "../dto/comment-create.dto";
+import { CommentsCreateDto } from "../dto/comments-create.dto";
 import { UserRepository } from "../../user/user.repository";
 import { Types } from "mongoose";
 
 @Injectable()
-export class CommentService {
+export class CommentsService {
   constructor(
     private readonly commentRepository: CommentRepository,
     private readonly boardRepository: BoardRepository,
@@ -18,7 +18,7 @@ export class CommentService {
   ) {}
 
   async findAllComments(): Promise<Json<ReadOnlyCommentsDto[]>> {
-    const comments: Array<Comment> =
+    const comments: Array<Comments> =
       await this.commentRepository.findComments();
 
     if (!comments.length) {
@@ -54,17 +54,17 @@ export class CommentService {
 
     const validateCommenter = await this.userRepository.findUserByEmail(email);
 
-    const commentPayload: CommentCreateDto = {
+    const commentPayload: CommentsCreateDto = {
       commenter: validateCommenter._id,
       content,
       info: target_id,
     };
 
-    const comment: Comment = await this.commentRepository.create(
+    const Comments: Comments = await this.commentRepository.create(
       commentPayload,
     );
 
-    const readOnlyComment: ReadOnlyCommentsDto = comment.readOnlyData;
+    const readOnlyComment: ReadOnlyCommentsDto = Comments.readOnlyData;
 
     return {
       statusCode: 201,

@@ -8,12 +8,12 @@ const option: SchemaOptions = {
 };
 
 @Schema(option)
-export class Comment extends Document {
+export class Comments extends Document {
   @IsNotEmpty()
   @Prop({
     type: Types.ObjectId,
     required: true,
-    ref: "boards",
+    ref: "BoardModel",
   })
   commenter: Types.ObjectId;
 
@@ -36,7 +36,7 @@ export class Comment extends Document {
   @Prop({
     type: Types.ObjectId,
     required: true,
-    ref: "boards",
+    ref: "BoardModel",
   })
   info: Types.ObjectId;
 
@@ -48,9 +48,9 @@ export class Comment extends Document {
   };
 }
 
-export const CommentSchema = SchemaFactory.createForClass(Comment);
+export const CommentsSchema = SchemaFactory.createForClass(Comments);
 
-CommentSchema.virtual("readOnlyData").get(function (this: Comment) {
+CommentsSchema.virtual("readOnlyData").get(function (this: Comments) {
   return {
     id: this.id,
     commenter: this.commenter,

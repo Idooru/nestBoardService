@@ -8,15 +8,15 @@ import { AuthModule } from "../auth/auth.module";
 import { UserModule } from "../user/user.module";
 import { ImageRepository } from "./repository/image.repository";
 import { Image, ImageSchema } from "./schemas/image.schema";
-import { Comment, CommentSchema } from "../comment/schemas/comment.schema";
-import { CommentModule } from "../comment/comment.module";
+import { Comments, CommentsSchema } from "../comments/schemas/comments.schema";
+import { CommentModule } from "../comments/comments.module";
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Board.name, schema: BoardSchema },
       { name: Image.name, schema: ImageSchema },
-      { name: Comment.name, schema: CommentSchema },
+      { name: Comments.name, schema: CommentsSchema },
     ]),
     forwardRef(() => AuthModule),
     forwardRef(() => UserModule),

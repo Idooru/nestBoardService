@@ -1,7 +1,7 @@
 import { SchemaOptions, Document } from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { IsArray, IsBoolean, IsNotEmpty, IsString } from "class-validator";
-import { Comment } from "src/model/comment/schemas/comment.schema";
+import { Comments } from "src/model/comments/schemas/comments.schema";
 
 const option: SchemaOptions = {
   timestamps: true,
@@ -42,7 +42,7 @@ export class Board extends Document {
 
   @IsArray()
   @Prop({
-    ref: "images",
+    ref: "Images",
   })
   imgUrls: Array<string>;
 
@@ -53,10 +53,10 @@ export class Board extends Document {
     description: string;
     isPublic: boolean;
     imgUrls: Array<string>;
-    commentList: Comment[];
+    commentList: Comments[];
   };
 
-  readonly commentList: Comment[];
+  readonly commentList: Comments[];
 }
 
 const _BoardSchema = SchemaFactory.createForClass(Board);
@@ -74,9 +74,9 @@ _BoardSchema.virtual("readOnlyData").get(function (this: Board) {
 });
 
 _BoardSchema.virtual("commentList", {
-  ref: "comments",
+  ref: "Comments",
   localField: "_id",
-  foreignField: "whichBoard",
+  foreignField: "info",
 });
 _BoardSchema.set("toObject", { virtuals: true });
 _BoardSchema.set("toJSON", { virtuals: true });
