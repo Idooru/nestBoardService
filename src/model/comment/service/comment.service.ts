@@ -38,16 +38,18 @@ export class CommentService {
 
   async createComment(
     payload: { content: string },
-    id: Types.ObjectId,
+    target_id: Types.ObjectId,
     user: JwtPayload,
   ): Promise<Json<ReadOnlyCommentsDto>> {
     const { content } = payload;
     const email = user.email;
 
-    const found: boolean = await this.boardRepository.existBoardId(id);
+    const found: boolean = await this.boardRepository.existBoardId(target_id);
 
     if (!found) {
-      throw new NotFoundException(`유효하지 않은 게시물 id입니다. id: {${id}}`);
+      throw new NotFoundException(
+        `유효하지 않은 게시물 id입니다. id: {${target_id}}`,
+      );
     }
 
     const validateCommenter = await this.userRepository.findUserByEmail(email);
@@ -55,7 +57,7 @@ export class CommentService {
     const commentPayload: CommentCreateDto = {
       commenter: validateCommenter._id,
       content,
-      whichBoard: id,
+      info: target_id,
     };
 
     const comment: Comment = await this.commentRepository.create(

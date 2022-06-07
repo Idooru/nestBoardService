@@ -13,7 +13,7 @@ export class Comment extends Document {
   @Prop({
     type: Types.ObjectId,
     required: true,
-    ref: "users",
+    ref: "boards",
   })
   commenter: Types.ObjectId;
 
@@ -38,13 +38,13 @@ export class Comment extends Document {
     required: true,
     ref: "boards",
   })
-  whichBoard: Types.ObjectId;
+  info: Types.ObjectId;
 
   readonly readOnlyData: {
     id: string;
     commenter: Types.ObjectId;
     content: string;
-    whichBoard: Types.ObjectId;
+    info: Types.ObjectId;
   };
 }
 
@@ -55,6 +55,6 @@ CommentSchema.virtual("readOnlyData").get(function (this: Comment) {
     id: this.id,
     commenter: this.commenter,
     content: this.content,
-    whichBoard: this.whichBoard,
+    info: this.info,
   };
 });

@@ -27,13 +27,13 @@ export class CommentController {
   @UseGuards(IsloginGuard)
   @Post("/:id/board")
   async createComment(
-    @Param("id") id: Types.ObjectId,
+    @Param("id") target_id: Types.ObjectId,
     @Body() payload: { content: string },
     @GetDecodedJwt() user: JwtPayload,
     @Res() res: Response,
   ) {
     return res
       .status(201)
-      .json(await this.commentService.createComment(payload, id, user));
+      .json(await this.commentService.createComment(payload, target_id, user));
   }
 }

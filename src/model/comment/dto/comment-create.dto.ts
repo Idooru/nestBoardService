@@ -4,5 +4,5 @@ import { Comment } from "../schemas/comment.schema";
 export class CommentCreateDto extends PickType(Comment, [
   "commenter",
   "content",
-  "whichBoard",
+  "info",
 ] as const) {}

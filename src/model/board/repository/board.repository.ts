@@ -26,7 +26,7 @@ export class BoardRepository {
 
   async findBoards(): Promise<Board[]> {
     const CommentModel = mongoose.model("comments", CommentSchema);
-    return await this.boardModel.find({}).populate("CommentList", CommentModel);
+    return await this.boardModel.find().populate("commentList", CommentModel);
   }
 
   async existBoardId(id: string | Types.ObjectId): Promise<boolean> {

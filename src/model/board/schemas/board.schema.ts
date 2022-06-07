@@ -53,10 +53,10 @@ export class Board extends Document {
     description: string;
     isPublic: boolean;
     imgUrls: Array<string>;
-    comments: Array<Comment>;
+    commentList: Comment[];
   };
 
-  readonly comments: Array<Comment>;
+  readonly commentList: Comment[];
 }
 
 const _BoardSchema = SchemaFactory.createForClass(Board);
@@ -69,13 +69,13 @@ _BoardSchema.virtual("readOnlyData").get(function (this: Board) {
     description: this.description,
     isPublic: this.isPublic,
     imgUrl: this.imgUrls,
-    comments: this.comments,
+    commentList: this.commentList,
   };
 });
 
-_BoardSchema.virtual("CommentList", {
+_BoardSchema.virtual("commentList", {
   ref: "comments",
-  localField: "id",
+  localField: "_id",
   foreignField: "whichBoard",
 });
 _BoardSchema.set("toObject", { virtuals: true });
