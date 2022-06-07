@@ -5,28 +5,27 @@ import { Model } from "mongoose";
 import { BoardCreateDto } from "../dto/board-create.dto";
 import { BoardUpdateDto } from "../dto/board-update-dto";
 import { Types } from "mongoose";
-import { CommentsSchema } from "src/model/comments/schemas/comments.schema";
-
-import * as mongoose from "mongoose";
+import { Comments } from "../../comments/schemas/comments.schema";
 
 @Injectable()
 export class BoardRepository {
-  constructor(@InjectModel(Board.name) readonly boardModel: Model<Board>) {}
+  constructor(
+    @InjectModel("boards") readonly boardModel: Model<Board>,
+    @InjectModel("comments") readonly commentModel: Model<Comments>,
+  ) {}
 
   async findBoardWithId(id: string | Types.ObjectId): Promise<Board> {
-    const CommentModel = mongoose.model("comments", CommentsSchema);
     return await this.boardModel
       .findById(id)
-      .populate("commentList", CommentModel);
+      .populate("commentList", this.commentModel);
   }
 
   async findBoardsWithName(name: string): Promise<Board[]> {
     return await this.boardModel.find().where("author").equals(name);
   }
 
-  async findBoards(): Promise<Board[]> {
-    const CommentModel = mongoose.model("comments", CommentsSchema);
-    return await this.boardModel.find().populate("commentList", CommentModel);
+  async findBoards(): Promise<any> {
+    return this.boardModel.find().populate("commentList", this.commentModel);
   }
 
   async existBoardId(id: string | Types.ObjectId): Promise<boolean> {

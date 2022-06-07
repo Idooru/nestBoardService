@@ -7,7 +7,7 @@ import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class ImageRepository {
-  constructor(@InjectModel("Image") readonly imageModel: Model<Image>) {}
+  constructor(@InjectModel("images") readonly imageModel: Model<Image>) {}
 
   async uploadImg(image: ImageUploadDto): Promise<ImageReturnDto> {
     const fileNameOnUrl = `http://localhost:8001/media/${image.fileName}`;

@@ -74,7 +74,7 @@ _BoardSchema.virtual("readOnlyData").get(function (this: Board) {
 });
 
 _BoardSchema.virtual("commentList", {
-  ref: "Comments",
+  ref: "comments",
   localField: "_id",
   foreignField: "info",
 });

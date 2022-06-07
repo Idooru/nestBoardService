@@ -6,7 +6,7 @@ import { UserCreateUpdateDto } from "./dto/user-create-update.dto";
 
 @Injectable()
 export class UserRepository {
-  constructor(@InjectModel(User.name) readonly userModel: Model<User>) {}
+  constructor(@InjectModel("users") readonly userModel: Model<User>) {}
 
   async existUserEmail(email: string): Promise<boolean> {
     return await this.userModel.exists({ email });

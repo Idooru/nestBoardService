@@ -7,7 +7,7 @@ import { CommentsCreateDto } from "./dto/comments-create.dto";
 @Injectable()
 export class CommentRepository {
   constructor(
-    @InjectModel("Comments") readonly commentsModel: Model<Comments>,
+    @InjectModel("comments") readonly commentsModel: Model<Comments>,
   ) {}
 
   async findComments(): Promise<Comments[]> {
