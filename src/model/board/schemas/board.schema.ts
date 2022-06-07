@@ -6,6 +6,8 @@ import { Comments } from "src/model/comments/schemas/comments.schema";
 const option: SchemaOptions = {
   timestamps: true,
   versionKey: false,
+  toJSON: { virtuals: true, getters: true },
+  toObject: { virtuals: true, getters: true },
 };
 
 @Schema(option)
@@ -76,7 +78,7 @@ _BoardSchema.virtual("readOnlyData").get(function (this: Board) {
 _BoardSchema.virtual("commentList", {
   ref: "comments",
   localField: "_id",
-  foreignField: "info",
+  foreignField: "whichBoard",
 });
 _BoardSchema.set("toObject", { virtuals: true });
 _BoardSchema.set("toJSON", { virtuals: true });

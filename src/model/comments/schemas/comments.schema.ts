@@ -37,13 +37,13 @@ export class Comments extends Document {
     required: true,
     ref: "boards",
   })
-  info: Types.ObjectId;
+  whichBoard: Types.ObjectId;
 
   readonly readOnlyData: {
     id: string;
     commenter: Types.ObjectId;
     content: string;
-    info: Types.ObjectId;
+    whichBoard: Types.ObjectId;
   };
 }
 
@@ -54,6 +54,6 @@ CommentsSchema.virtual("readOnlyData").get(function (this: Comments) {
     id: this.id,
     commenter: this.commenter,
     content: this.content,
-    info: this.info,
+    whichBoard: this.whichBoard,
   };
 });

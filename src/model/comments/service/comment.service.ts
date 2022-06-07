@@ -57,7 +57,7 @@ export class CommentsService {
     const commentPayload: CommentsCreateDto = {
       commenter: validateCommenter._id,
       content,
-      info: target_id,
+      whichBoard: target_id,
     };
 
     const Comments: Comments = await this.commentRepository.create(

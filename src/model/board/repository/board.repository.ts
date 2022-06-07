@@ -11,13 +11,13 @@ import { Comments } from "../../comments/schemas/comments.schema";
 export class BoardRepository {
   constructor(
     @InjectModel("boards") readonly boardModel: Model<Board>,
-    @InjectModel("comments") readonly commentModel: Model<Comments>,
+    @InjectModel("comments") readonly commentsModel: Model<Comments>,
   ) {}
 
   async findBoardWithId(id: string | Types.ObjectId): Promise<Board> {
     return await this.boardModel
       .findById(id)
-      .populate("commentList", this.commentModel);
+      .populate("commentList", this.commentsModel);
   }
 
   async findBoardsWithName(name: string): Promise<Board[]> {
@@ -25,7 +25,7 @@ export class BoardRepository {
   }
 
   async findBoards(): Promise<any> {
-    return this.boardModel.find().populate("commentList", this.commentModel);
+    return this.boardModel.find().populate("commentList", this.commentsModel);
   }
 
   async existBoardId(id: string | Types.ObjectId): Promise<boolean> {
