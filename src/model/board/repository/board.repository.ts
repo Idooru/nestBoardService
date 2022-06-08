@@ -1,10 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Board } from "../schemas/board.schema";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 import { BoardCreateDto } from "../dto/board-create.dto";
 import { BoardUpdateDto } from "../dto/board-update-dto";
-import { Types } from "mongoose";
 import { Comments } from "../../comments/schemas/comments.schema";
 
 @Injectable()
@@ -14,7 +13,7 @@ export class BoardRepository {
     @InjectModel("comments") readonly commentsModel: Model<Comments>,
   ) {}
 
-  async findBoardWithId(id: string | Types.ObjectId): Promise<Board> {
+  async findBoardWithId(id: Types.ObjectId | string): Promise<Board> {
     return await this.boardModel
       .findById(id)
       .populate("commentList", this.commentsModel);
@@ -28,7 +27,7 @@ export class BoardRepository {
     return this.boardModel.find().populate("commentList", this.commentsModel);
   }
 
-  async existBoardId(id: string | Types.ObjectId): Promise<boolean> {
+  async existBoardId(id: Types.ObjectId | string): Promise<boolean> {
     return await this.boardModel.exists({ _id: id });
   }
 
@@ -41,13 +40,13 @@ export class BoardRepository {
   }
 
   async update(
-    id: string | Types.ObjectId,
+    id: Types.ObjectId | string,
     board: BoardUpdateDto,
   ): Promise<void> {
     await this.boardModel.updateOne({ _id: id }, board);
   }
 
-  async delete(id: string | Types.ObjectId): Promise<void> {
+  async delete(id: Types.ObjectId | string): Promise<void> {
     await this.boardModel.deleteOne({ _id: id });
   }
 

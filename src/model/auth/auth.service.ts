@@ -5,6 +5,7 @@ import { LoginDto } from "./dto/login.dto";
 import { Json } from "src/lib/interfaces/json.interface";
 import { User } from "../user/schemas/user.schema";
 import { JwtPayload } from "./jwt/jwt-payload.interface";
+import { Types } from "mongoose";
 
 import * as bcrypt from "bcrypt";
 
@@ -47,7 +48,7 @@ export class AuthService {
   async refreshTokenWhenLogin(
     decryptedToken: JwtPayload,
   ): Promise<Json<string>> {
-    const id: string = decryptedToken.id;
+    const id: Types.ObjectId = decryptedToken.id;
     const user: User = await this.userRepository.findUserById(id);
 
     const email = user.email;

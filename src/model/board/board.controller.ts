@@ -24,6 +24,7 @@ import { Json } from "src/lib/interfaces/json.interface";
 import { GetImageCookies } from "src/lib/decorators/get-image-cookies.decorator";
 import { ImageReturnDto } from "./dto/image-return.dto";
 import { ReadOnlyBoardsDto } from "./dto/read-only-boards.dto";
+import { Types } from "mongoose";
 
 @Controller("board")
 export class BoardController {
@@ -129,7 +130,7 @@ export class BoardController {
   @UseGuards(IsloginGuard)
   @Delete(":id/id")
   async removeBoard(
-    @Param("id") id: string,
+    @Param("id") id: Types.ObjectId,
     @GetDecodedJwt() user: JwtPayload,
     @Res() res: Response,
   ) {

@@ -18,6 +18,7 @@ import { UserService } from "./user.service";
 import { IsloginGuard } from "../../lib/guards/islogin.guard";
 import { GetDecodedJwt } from "src/lib/decorators/user.decorator";
 import { JwtPayload } from "../auth/jwt/jwt-payload.interface";
+import { Types } from "mongoose";
 
 @Controller("/user")
 export class UserController {
@@ -71,7 +72,7 @@ export class UserController {
     @GetDecodedJwt() user: JwtPayload,
     @Res() res: Response,
   ): ServerResponse {
-    const json: Json<{ id: string; email: string; name: string }> = {
+    const json: Json<{ id: Types.ObjectId; email: string; name: string }> = {
       statusCode: 200,
       message: "본인 정보를 가져옵니다.",
       result: {

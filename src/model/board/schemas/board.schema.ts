@@ -1,4 +1,4 @@
-import { SchemaOptions, Document } from "mongoose";
+import { SchemaOptions, Document, Types } from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { IsArray, IsBoolean, IsNotEmpty, IsString } from "class-validator";
 import { Comments } from "src/model/comments/schemas/comments.schema";
@@ -49,7 +49,7 @@ export class Board extends Document {
   imgUrls: Array<string>;
 
   readonly readOnlyData: {
-    id: string;
+    id: Types.ObjectId;
     title: string;
     author: string;
     description: string;

@@ -1,6 +1,6 @@
 import { Prop, SchemaFactory, Schema } from "@nestjs/mongoose";
 import { IsNotEmpty, IsString, MaxLength } from "class-validator";
-import { Document, Types, SchemaOptions } from "mongoose";
+import { Document, SchemaOptions, Types } from "mongoose";
 
 const option: SchemaOptions = {
   timestamps: true,
@@ -11,10 +11,9 @@ const option: SchemaOptions = {
 export class Comments extends Document {
   @IsNotEmpty()
   @Prop({
-    type: Types.ObjectId,
     required: true,
   })
-  commenter: Types.ObjectId;
+  commenter: string;
 
   @IsNotEmpty()
   @IsString()
@@ -33,15 +32,14 @@ export class Comments extends Document {
 
   @IsNotEmpty()
   @Prop({
-    type: Types.ObjectId,
     required: true,
     ref: "boards",
   })
   whichBoard: Types.ObjectId;
 
   readonly readOnlyData: {
-    id: string;
-    commenter: Types.ObjectId;
+    id: Types.ObjectId;
+    commenter: string;
     content: string;
     whichBoard: Types.ObjectId;
   };

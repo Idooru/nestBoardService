@@ -6,16 +6,18 @@ import { Comments } from "../schemas/comments.schema";
 import { JwtPayload } from "../../auth/jwt/jwt-payload.interface";
 import { BoardRepository } from "../../board/repository/board.repository";
 import { CommentsCreateDto } from "../dto/comments-create.dto";
-import { UserRepository } from "../../user/user.repository";
+
 import { Types } from "mongoose";
+import { Exist } from "src/lib/exists";
 
 @Injectable()
 export class CommentsService {
   constructor(
     private readonly commentRepository: CommentRepository,
     private readonly boardRepository: BoardRepository,
-    private readonly userRepository: UserRepository,
   ) {}
+
+  private readonly validate = new Exist(this.boardRepository);
 
   async findAllComments(): Promise<Json<ReadOnlyCommentsDto[]>> {
     const comments: Array<Comments> =
@@ -38,26 +40,21 @@ export class CommentsService {
 
   async createComment(
     payload: { content: string },
-    target_id: Types.ObjectId,
+    id: Types.ObjectId,
     user: JwtPayload,
   ): Promise<Json<ReadOnlyCommentsDto>> {
-    const { content } = payload;
-    const email = user.email;
-
-    const found: boolean = await this.boardRepository.existBoardId(target_id);
+    const found = await this.validate.isExistId(id);
 
     if (!found) {
-      throw new NotFoundException(
-        `유효하지 않은 게시물 id입니다. id: {${target_id}}`,
-      );
+      throw new NotFoundException(`유효하지 않은 id입니다. id: {${id}}`);
     }
 
-    const validateCommenter = await this.userRepository.findUserByEmail(email);
+    const { content } = payload;
 
     const commentPayload: CommentsCreateDto = {
-      commenter: validateCommenter._id,
+      commenter: user.name,
       content,
-      whichBoard: target_id,
+      whichBoard: id,
     };
 
     const Comments: Comments = await this.commentRepository.create(
