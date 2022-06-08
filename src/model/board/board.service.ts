@@ -13,8 +13,8 @@ import { UserRepository } from "../user/user.repository";
 import { ImageRepository } from "./repository/image.repository";
 import { ImageReturnDto } from "./dto/image-return.dto";
 import { ReadOnlyBoardsDto } from "./dto/read-only-boards.dto";
+
 import { Types } from "mongoose";
-import { Exist } from "src/lib/exists";
 
 @Injectable()
 export class BoardService {
@@ -23,11 +23,6 @@ export class BoardService {
     protected readonly imageRepository: ImageRepository,
     protected readonly userRepository: UserRepository,
   ) {}
-
-  private readonly validate = new Exist(
-    this.boardRepository,
-    this.userRepository,
-  );
 
   async createBoard(
     payload: BoardRequestDto,
@@ -45,7 +40,7 @@ export class BoardService {
       author,
       description,
       isPublic,
-      imgUrls: undefinedOrUrls,
+      imageList: undefinedOrUrls,
     });
     const readOnlyBoard: ReadOnlyBoardsDto = board.readOnlyData;
 
@@ -117,7 +112,7 @@ export class BoardService {
   }
 
   async findOneBoardWithId(id: string): Promise<Json<ReadOnlyBoardsDto>> {
-    const found: boolean = await this.validate.isExistId(id);
+    const found: boolean = await this.boardRepository.existBoardId(id);
 
     if (!found) {
       throw new NotFoundException(`유효하지 않은 id입니다. id: ${id}`);
@@ -136,12 +131,6 @@ export class BoardService {
   async findAllBoardsWithAuthorName(
     name: string,
   ): Promise<Json<ReadOnlyBoardsDto[]>> {
-    const found: boolean = await this.validate.isExistName(name);
-
-    if (!found) {
-      throw new NotFoundException(`유효하지 않은 name입니다. name: {${name}}`);
-    }
-
     const boards: Board[] = await this.boardRepository.findBoardsWithName(name);
 
     if (!boards.length) {
@@ -188,7 +177,7 @@ export class BoardService {
     imgUrls: Array<ImageReturnDto>,
     user: JwtPayload,
   ): Promise<Json<void>> {
-    const found: boolean = await this.validate.isExistId(id);
+    const found: boolean = await this.boardRepository.existBoardId(id);
 
     if (!found) {
       throw new NotFoundException(`유효하지 않은 id입니다. id: {${id}}`);
@@ -219,7 +208,7 @@ export class BoardService {
       author,
       description,
       isPublic,
-      imgUrls: undefinedOrUrls,
+      imageList: undefinedOrUrls,
     });
 
     return {
@@ -229,9 +218,9 @@ export class BoardService {
   }
 
   async removeBoard(id: Types.ObjectId, user: JwtPayload): Promise<Json<void>> {
-    try {
-      this.validate.isExistId(id);
-    } catch (err) {
+    const found: boolean = await this.boardRepository.existBoardId(id);
+
+    if (!found) {
       throw new NotFoundException(`유효하지 않은 id입니다. id: {${id}}`);
     }
 
@@ -241,11 +230,11 @@ export class BoardService {
       author,
     );
 
-    const found = boards
+    const isMine = boards
       .map((idx) => idx.readOnlyData)
       .find((idx) => idx.author === author);
 
-    if (!found) {
+    if (!isMine) {
       throw new UnauthorizedException(
         "본인 게시물 이외에는 삭제 할 수 없습니다.",
       );

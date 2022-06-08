@@ -87,7 +87,7 @@ export class BoardController {
     return res.status(200).json(await this.boardService.findOneBoardWithId(id));
   }
 
-  @Get(":name/name")
+  @Get(":name/author")
   async findBoardsWithName(
     @Param("name") name: string,
     @Res() res: Response,

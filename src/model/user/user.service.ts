@@ -55,19 +55,30 @@ export class UserService {
     user: JwtPayload,
   ): Promise<Json<string>> {
     const id = user.id;
+    const email = payload.email;
+    const name = payload.name;
+
+    const isEmailExist: boolean = await this.userRepository.existUserEmail(
+      email,
+    );
+
+    const isNameExist: boolean = await this.userRepository.existUserName(name);
+
+    if (isEmailExist) {
+      throw new ForbiddenException(`해당 이메일은 사용중입니다. ${email}`);
+    } else if (isNameExist) {
+      throw new ForbiddenException(`해당 이름은 사용중입니다. ${name}`);
+    }
 
     const hashed = await bcrypt.hash(payload.password, 10);
 
     const changedPayload = {
-      email: payload.email,
-      name: payload.name,
+      email,
+      name,
       password: hashed,
     };
 
     await this.userRepository.setUser(changedPayload, id);
-
-    const email = payload.email;
-    const name = payload.name;
 
     const dataToBeJwt: JwtPayload = { id, email, name };
 

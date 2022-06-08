@@ -1,6 +1,6 @@
 import { Schema, SchemaOptions, Prop, SchemaFactory } from "@nestjs/mongoose";
 import { IsNotEmpty, IsString } from "class-validator";
-import { Document } from "mongoose";
+import { Document, Types } from "mongoose";
 
 const option: SchemaOptions = {
   autoIndex: true,
@@ -10,6 +10,11 @@ const option: SchemaOptions = {
 
 @Schema(option)
 export class Image extends Document {
+  @Prop({
+    type: Types.ObjectId,
+  })
+  imgIdx: Types.ObjectId;
+
   @IsNotEmpty()
   @IsString()
   @Prop({

@@ -6,8 +6,6 @@ import { Comments } from "src/model/comments/schemas/comments.schema";
 const option: SchemaOptions = {
   timestamps: true,
   versionKey: false,
-  toJSON: { virtuals: true, getters: true },
-  toObject: { virtuals: true, getters: true },
 };
 
 @Schema(option)
@@ -44,9 +42,11 @@ export class Board extends Document {
 
   @IsArray()
   @Prop({
-    ref: "Images",
+    required: true,
   })
-  imgUrls: Array<string>;
+  imageList: Array<string>;
+
+  readonly commentList: Comments[];
 
   readonly readOnlyData: {
     id: Types.ObjectId;
@@ -54,11 +54,9 @@ export class Board extends Document {
     author: string;
     description: string;
     isPublic: boolean;
-    imgUrls: Array<string>;
+    imageList: Array<string>;
     commentList: Comments[];
   };
-
-  readonly commentList: Comments[];
 }
 
 const _BoardSchema = SchemaFactory.createForClass(Board);
@@ -70,12 +68,12 @@ _BoardSchema.virtual("readOnlyData").get(function (this: Board) {
     author: this.author,
     description: this.description,
     isPublic: this.isPublic,
-    imgUrl: this.imgUrls,
+    imgUrl: this.imageList,
     commentList: this.commentList,
   };
 });
 
-_BoardSchema.virtual("commentList", {
+_BoardSchema.virtual("comments_detail", {
   ref: "comments",
   localField: "_id",
   foreignField: "whichBoard",

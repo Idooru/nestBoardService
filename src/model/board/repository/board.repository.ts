@@ -24,7 +24,9 @@ export class BoardRepository {
   }
 
   async findBoards(): Promise<Board[]> {
-    return this.boardModel.find().populate("commentList", this.commentsModel);
+    return this.boardModel
+      .find()
+      .populate("comments_detail", this.commentsModel);
   }
 
   async existBoardId(id: Types.ObjectId | string): Promise<boolean> {

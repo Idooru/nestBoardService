@@ -8,7 +8,6 @@ import { BoardRepository } from "../../board/repository/board.repository";
 import { CommentsCreateDto } from "../dto/comments-create.dto";
 
 import { Types } from "mongoose";
-import { Exist } from "src/lib/exists";
 
 @Injectable()
 export class CommentsService {
@@ -16,8 +15,6 @@ export class CommentsService {
     private readonly commentRepository: CommentRepository,
     private readonly boardRepository: BoardRepository,
   ) {}
-
-  private readonly validate = new Exist(this.boardRepository);
 
   async findAllComments(): Promise<Json<ReadOnlyCommentsDto[]>> {
     const comments: Array<Comments> =
@@ -43,7 +40,7 @@ export class CommentsService {
     id: Types.ObjectId,
     user: JwtPayload,
   ): Promise<Json<ReadOnlyCommentsDto>> {
-    const found = await this.validate.isExistId(id);
+    const found = await this.boardRepository.existBoardId(id);
 
     if (!found) {
       throw new NotFoundException(`유효하지 않은 id입니다. id: {${id}}`);

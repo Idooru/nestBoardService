@@ -7,5 +7,4 @@ export class ReadOnlyBoardsDto extends PickType(Board, [
   "author",
   "description",
   "isPublic",
-  "imgUrls",
 ] as const) {}
