@@ -23,7 +23,7 @@ export class BoardRepository {
     return await this.boardModel.find().where("author").equals(name);
   }
 
-  async findBoards(): Promise<any> {
+  async findBoards(): Promise<Board[]> {
     return this.boardModel.find().populate("commentList", this.commentsModel);
   }
 

@@ -14,7 +14,6 @@ import { ImageRepository } from "./repository/image.repository";
 import { ImageReturnDto } from "./dto/image-return.dto";
 import { ReadOnlyBoardsDto } from "./dto/read-only-boards.dto";
 import { Types } from "mongoose";
-import * as mongoose from "mongoose";
 import { Exist } from "src/lib/exists";
 
 @Injectable()

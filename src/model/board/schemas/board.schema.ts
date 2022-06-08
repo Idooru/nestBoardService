@@ -80,6 +80,7 @@ _BoardSchema.virtual("commentList", {
   localField: "_id",
   foreignField: "whichBoard",
 });
+
 _BoardSchema.set("toObject", { virtuals: true });
 _BoardSchema.set("toJSON", { virtuals: true });
 
