@@ -15,7 +15,7 @@ export class ValidateExistForValue {
     private readonly userRepository: UserRepository,
   ) {}
 
-  async isExistBoardId(id: Types.ObjectId | string) {
+  async isExistBoardId(id: Types.ObjectId | string): Promise<void> {
     try {
       const found: boolean = await this.boardRepository.existBoardId(id);
 
@@ -27,7 +27,7 @@ export class ValidateExistForValue {
     }
   }
 
-  async isExistAuthorName(name: string) {
+  async isExistAuthorName(name: string): Promise<void> {
     const found: boolean = await this.userRepository.existUserName(name);
 
     if (!found) {
@@ -37,7 +37,7 @@ export class ValidateExistForValue {
     }
   }
 
-  async isExistUserValue(email: string, name: string) {
+  async isExistUserValue(email: string, name: string): Promise<void> {
     const isEmailExist: boolean = await this.userRepository.existUserEmail(
       email,
     );
