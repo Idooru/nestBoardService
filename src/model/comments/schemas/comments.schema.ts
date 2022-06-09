@@ -23,13 +23,6 @@ export class Comments extends Document {
   })
   content: string;
 
-  // @IsNotEmpty()
-  // @IsPositive()
-  // @Prop({
-  //   default: 0,
-  // })
-  // likeCount: number;
-
   @IsNotEmpty()
   @Prop({
     required: true,

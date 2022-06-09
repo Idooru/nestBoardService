@@ -1,6 +1,6 @@
 import { Module, forwardRef } from "@nestjs/common";
-import { BoardController } from "./board.controller";
-import { BoardService } from "./board.service";
+import { BoardController } from "./controller/board.controller";
+import { BoardService } from "./service/board.service";
 import { MongooseModule } from "@nestjs/mongoose";
 import { BoardSchema } from "./schemas/board.schema";
 import { BoardRepository } from "./repository/board.repository";
@@ -10,6 +10,7 @@ import { ImageRepository } from "./repository/image.repository";
 import { ImageSchema } from "./schemas/image.schema";
 import { CommentsSchema } from "../comments/schemas/comments.schema";
 import { CommentModule } from "../comments/comments.module";
+import { ValidatorModule } from "../../lib/validator/validator.module";
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { CommentModule } from "../comments/comments.module";
     forwardRef(() => AuthModule),
     forwardRef(() => UserModule),
     forwardRef(() => CommentModule),
+    forwardRef(() => ValidatorModule),
   ],
   controllers: [BoardController],
   providers: [BoardService, BoardRepository, ImageRepository],

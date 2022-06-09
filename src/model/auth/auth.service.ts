@@ -2,7 +2,6 @@ import { BadRequestException, Injectable } from "@nestjs/common";
 import { UserRepository } from "../user/user.repository";
 import { JwtService } from "@nestjs/jwt";
 import { LoginDto } from "./dto/login.dto";
-import { Json } from "src/lib/interfaces/json.interface";
 import { User } from "../user/schemas/user.schema";
 import { JwtPayload } from "./jwt/jwt-payload.interface";
 import { Types } from "mongoose";
@@ -16,7 +15,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async login(payload: LoginDto): Promise<Json<string>> {
+  async login(payload: LoginDto): Promise<string> {
     const { email, password } = payload;
     const user: User = await this.userRepository.findUserByEmail(email);
 
@@ -38,30 +37,19 @@ export class AuthService {
 
     const jwtToken: string = this.jwtService.sign(dataToBeJwt);
 
-    return {
-      statusCode: 200,
-      message: `${user.email}계정으로 로그인에 성공하였습니다.`,
-      result: jwtToken,
-    };
+    return jwtToken;
   }
 
-  async refreshTokenWhenLogin(
-    decryptedToken: JwtPayload,
-  ): Promise<Json<string>> {
-    const id: Types.ObjectId = decryptedToken.id;
+  async refreshTokenWhenLogin(decryptedToken: JwtPayload): Promise<string> {
+    const id: string = decryptedToken.id;
     const user: User = await this.userRepository.findUserById(id);
 
-    const email = user.email;
-    const name = user.name;
+    const { email, name } = user;
 
     const dataToBeJwt: JwtPayload = { id, email, name };
     const jwtToken: string = this.jwtService.sign(dataToBeJwt);
 
-    return {
-      statusCode: 200,
-      message: "토큰을 재발급합니다.",
-      result: jwtToken,
-    };
+    return jwtToken;
   }
 
   async refreshTokenWhenSetUser(dataToBeJwt: JwtPayload): Promise<string> {

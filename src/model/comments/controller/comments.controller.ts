@@ -1,27 +1,26 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Post,
-  Res,
-  UseGuards,
-} from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
 import { CommentsService } from "../service/comment.service";
-import { ServerResponse } from "http";
-import { Response } from "express";
 import { IsloginGuard } from "../../../lib/guards/islogin.guard";
 import { GetDecodedJwt } from "src/lib/decorators/user.decorator";
 import { JwtPayload } from "../../auth/jwt/jwt-payload.interface";
 import { Types } from "mongoose";
+import { JSON } from "src/lib/interfaces/json.interface";
+import { ReadOnlyCommentsDto } from "../dto/read-only-comments.dto";
 
 @Controller("Comments")
 export class CommentsController {
   constructor(private readonly commentService: CommentsService) {}
 
   @Get()
-  async findAllComments(@Res() res: Response): Promise<ServerResponse> {
-    return res.status(200).json(await this.commentService.findAllComments());
+  async findAllComments(): Promise<JSON<ReadOnlyCommentsDto[]>> {
+    const result: ReadOnlyCommentsDto[] =
+      await this.commentService.findAllComments();
+
+    return {
+      statusCode: 200,
+      message: "전체 댓글을 가져옵니다.",
+      result,
+    };
   }
 
   @UseGuards(IsloginGuard)
@@ -30,10 +29,17 @@ export class CommentsController {
     @Param("id") target_id: Types.ObjectId,
     @Body() payload: { content: string },
     @GetDecodedJwt() user: JwtPayload,
-    @Res() res: Response,
-  ) {
-    return res
-      .status(201)
-      .json(await this.commentService.createComment(payload, target_id, user));
+  ): Promise<JSON<ReadOnlyCommentsDto>> {
+    const result: ReadOnlyCommentsDto = await this.commentService.createComment(
+      payload,
+      target_id,
+      user,
+    );
+
+    return {
+      statusCode: 201,
+      message: "댓글을 생성하였습니다.",
+      result,
+    };
   }
 }

@@ -71,9 +71,3 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
-
-## 작성시 유의 사항
-
-1. Json 인터페이스로 result값을 전달하기 위해서는 result키의 값이되는 프로퍼티는 무조건 변수 형태이여야 하며 그 변수의 타입을 정의해야한다. 만일 객체형태라면 그 객체는 DTO형태로 작성해야한다.
-
-2. 현재 컨트롤러에서 리턴을 통한 응답이 아닌 express의 res객체를 통한 응답을 하기 때문에 인터셉터를 사용하게 될 시 Can't set headers after they are sent 오류가 발생한다. 응답을 두번 할 시 발생하는 에러이므로 인터셉터를 사용할 시 컨트롤러의 응답 방식을 res객체를 통한 응답 대신 리턴으로 바꿔야 한다.

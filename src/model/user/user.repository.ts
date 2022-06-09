@@ -21,7 +21,7 @@ export class UserRepository {
     return await this.userModel.findOne({ email });
   }
 
-  async findUserById(id: Types.ObjectId): Promise<User> {
+  async findUserById(id: Types.ObjectId | string): Promise<User> {
     return await this.userModel.findById(id);
   }
 
@@ -29,11 +29,14 @@ export class UserRepository {
     return await this.userModel.create(user);
   }
 
-  async setUser(user: UserCreateUpdateDto, id: Types.ObjectId): Promise<void> {
+  async setUser(
+    user: UserCreateUpdateDto,
+    id: Types.ObjectId | string,
+  ): Promise<void> {
     await this.userModel.updateOne({ _id: id }, user);
   }
 
-  async secession(id: Types.ObjectId): Promise<void> {
+  async secession(id: Types.ObjectId | string): Promise<void> {
     await this.userModel.deleteOne({ _id: id });
   }
 }

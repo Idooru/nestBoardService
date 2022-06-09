@@ -1,11 +1,10 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { Json } from "src/lib/interfaces/json.interface";
 import { CommentRepository } from "../comments.repository";
 import { ReadOnlyCommentsDto } from "../dto/read-only-comments.dto";
 import { Comments } from "../schemas/comments.schema";
 import { JwtPayload } from "../../auth/jwt/jwt-payload.interface";
-import { BoardRepository } from "../../board/repository/board.repository";
 import { CommentsCreateDto } from "../dto/comments-create.dto";
+import { ValidateExistForValue } from "../../../lib/validator/validate-exist.provider";
 
 import { Types } from "mongoose";
 
@@ -13,10 +12,10 @@ import { Types } from "mongoose";
 export class CommentsService {
   constructor(
     private readonly commentRepository: CommentRepository,
-    private readonly boardRepository: BoardRepository,
+    private readonly validateExist: ValidateExistForValue,
   ) {}
 
-  async findAllComments(): Promise<Json<ReadOnlyCommentsDto[]>> {
+  async findAllComments(): Promise<ReadOnlyCommentsDto[]> {
     const comments: Array<Comments> =
       await this.commentRepository.findComments();
 
@@ -28,23 +27,15 @@ export class CommentsService {
       (idx) => idx.readOnlyData,
     );
 
-    return {
-      statusCode: 200,
-      message: "전체 댓글을 가져옵니다.",
-      result: readOnlyComments,
-    };
+    return readOnlyComments;
   }
 
   async createComment(
     payload: { content: string },
     id: Types.ObjectId,
     user: JwtPayload,
-  ): Promise<Json<ReadOnlyCommentsDto>> {
-    const found = await this.boardRepository.existBoardId(id);
-
-    if (!found) {
-      throw new NotFoundException(`유효하지 않은 id입니다. id: {${id}}`);
-    }
+  ): Promise<ReadOnlyCommentsDto> {
+    await this.validateExist.isExistBoardId(id);
 
     const { content } = payload;
 
@@ -60,10 +51,6 @@ export class CommentsService {
 
     const readOnlyComment: ReadOnlyCommentsDto = Comments.readOnlyData;
 
-    return {
-      statusCode: 201,
-      message: "댓글을 생성하였습니다.",
-      result: readOnlyComment,
-    };
+    return readOnlyComment;
   }
 }

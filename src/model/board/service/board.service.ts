@@ -4,17 +4,15 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from "@nestjs/common";
-import { BoardRequestDto } from "./dto/board-request.dto";
-import { Json } from "../../lib/interfaces/json.interface";
-import { Board } from "./schemas/board.schema";
-import { BoardRepository } from "./repository/board.repository";
-import { JwtPayload } from "../auth/jwt/jwt-payload.interface";
-import { UserRepository } from "../user/user.repository";
-import { ImageRepository } from "./repository/image.repository";
-import { ImageReturnDto } from "./dto/image-return.dto";
-import { ReadOnlyBoardsDto } from "./dto/read-only-boards.dto";
-
-import { Types } from "mongoose";
+import { BoardRequestDto } from "../dto/board-request.dto";
+import { Board } from "../schemas/board.schema";
+import { BoardRepository } from "../repository/board.repository";
+import { JwtPayload } from "../../auth/jwt/jwt-payload.interface";
+import { UserRepository } from "../../user/user.repository";
+import { ImageRepository } from "../repository/image.repository";
+import { ImageReturnDto } from "../dto/image-return.dto";
+import { ReadOnlyBoardsDto } from "../dto/read-only-boards.dto";
+import { ValidateExistForValue } from "../../../lib/validator/validate-exist.provider";
 
 @Injectable()
 export class BoardService {
@@ -22,13 +20,14 @@ export class BoardService {
     protected readonly boardRepository: BoardRepository,
     protected readonly imageRepository: ImageRepository,
     protected readonly userRepository: UserRepository,
+    private readonly validateExist: ValidateExistForValue,
   ) {}
 
   async createBoard(
     payload: BoardRequestDto,
     imgUrls: Array<ImageReturnDto>,
     user: JwtPayload,
-  ): Promise<Json<ReadOnlyBoardsDto>> {
+  ): Promise<ReadOnlyBoardsDto> {
     const { title, description, isPublic } = payload;
     const author = user.name;
 
@@ -44,17 +43,13 @@ export class BoardService {
     });
     const readOnlyBoard: ReadOnlyBoardsDto = board.readOnlyData;
 
-    return {
-      statusCode: 201,
-      message: "게시물이 생성되었습니다.",
-      result: readOnlyBoard,
-    };
+    return readOnlyBoard;
   }
 
   async uploadImg(
     files: Array<Express.Multer.File>,
     user: JwtPayload,
-  ): Promise<Json<ImageReturnDto[]>> {
+  ): Promise<ImageReturnDto[]> {
     const imgUrls: ImageReturnDto[] = [];
     const author = user.name;
 
@@ -86,14 +81,10 @@ export class BoardService {
       );
     }
 
-    return {
-      statusCode: 201,
-      message: "사진을 업로드 하였습니다.",
-      result: imgUrls,
-    };
+    return imgUrls;
   }
 
-  async findAllBoards(): Promise<Json<ReadOnlyBoardsDto[]>> {
+  async findAllBoards(): Promise<ReadOnlyBoardsDto[]> {
     const boards: Array<Board> = await this.boardRepository.findBoards();
 
     if (!boards.length) {
@@ -104,33 +95,23 @@ export class BoardService {
       .filter((idx) => idx.isPublic)
       .map((idx) => idx.readOnlyData);
 
-    return {
-      statusCode: 200,
-      message: "전체 게시물을 가져왔습니다.",
-      result: readOnlyBoards,
-    };
+    return readOnlyBoards;
   }
 
-  async findOneBoardWithId(id: string): Promise<Json<ReadOnlyBoardsDto>> {
-    const found: boolean = await this.boardRepository.existBoardId(id);
-
-    if (!found) {
-      throw new NotFoundException(`유효하지 않은 id입니다. id: ${id}`);
-    }
+  async findOneBoardWithId(id: string): Promise<ReadOnlyBoardsDto> {
+    await this.validateExist.isExistBoardId(id);
 
     const board: Board = await this.boardRepository.findBoardWithId(id);
     const readOnlyBoard: ReadOnlyBoardsDto = board.readOnlyData;
 
-    return {
-      statusCode: 200,
-      message: `${id}에 해당하는 게시물을 가져왔습니다.`,
-      result: readOnlyBoard,
-    };
+    return readOnlyBoard;
   }
 
   async findAllBoardsWithAuthorName(
     name: string,
-  ): Promise<Json<ReadOnlyBoardsDto[]>> {
+  ): Promise<ReadOnlyBoardsDto[]> {
+    await this.validateExist.isExistAuthorName(name);
+
     const boards: Board[] = await this.boardRepository.findBoardsWithName(name);
 
     if (!boards.length) {
@@ -143,14 +124,10 @@ export class BoardService {
       .filter((idx) => idx.isPublic)
       .map((idx) => idx.readOnlyData);
 
-    return {
-      statusCode: 200,
-      message: `${name}님이 작성한 게시물을 가져왔습니다.`,
-      result: readOnlyBoards,
-    };
+    return readOnlyBoards;
   }
 
-  async findMyBoards(user: JwtPayload): Promise<Json<ReadOnlyBoardsDto[]>> {
+  async findMyBoards(user: JwtPayload): Promise<ReadOnlyBoardsDto[]> {
     const name = user.name;
     const boards: Board[] = await this.boardRepository.findBoardsWithName(name);
 
@@ -164,11 +141,7 @@ export class BoardService {
       (idx) => idx.readOnlyData,
     );
 
-    return {
-      statusCode: 200,
-      message: `${name}님이 작성한 게시물을 가져왔습니다.`,
-      result: readOnlyBoards,
-    };
+    return readOnlyBoards;
   }
 
   async updateBoard(
@@ -176,12 +149,8 @@ export class BoardService {
     payload: BoardRequestDto,
     imgUrls: Array<ImageReturnDto>,
     user: JwtPayload,
-  ): Promise<Json<void>> {
-    const found: boolean = await this.boardRepository.existBoardId(id);
-
-    if (!found) {
-      throw new NotFoundException(`유효하지 않은 id입니다. id: {${id}}`);
-    }
+  ): Promise<void> {
+    await this.validateExist.isExistBoardId(id);
 
     const { title, description, isPublic } = payload;
     const author = user.name;
@@ -210,19 +179,10 @@ export class BoardService {
       isPublic,
       imageList: undefinedOrUrls,
     });
-
-    return {
-      statusCode: 201,
-      message: `${id}에 해당하는 게시물을 수정하였습니다.`,
-    };
   }
 
-  async removeBoard(id: Types.ObjectId, user: JwtPayload): Promise<Json<void>> {
-    const found: boolean = await this.boardRepository.existBoardId(id);
-
-    if (!found) {
-      throw new NotFoundException(`유효하지 않은 id입니다. id: {${id}}`);
-    }
+  async removeBoard(id: string, user: JwtPayload): Promise<void> {
+    await this.validateExist.isExistBoardId(id);
 
     const author = user.name;
 
@@ -241,10 +201,5 @@ export class BoardService {
     }
 
     await this.boardRepository.delete(id);
-
-    return {
-      statusCode: 200,
-      message: `${id}에 해당하는 게시물을 삭제하였습니다.`,
-    };
   }
 }

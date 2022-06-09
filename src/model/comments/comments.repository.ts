@@ -17,4 +17,8 @@ export class CommentRepository {
   async create(commentPayload: CommentsCreateDto): Promise<Comments> {
     return await this.commentsModel.create(commentPayload);
   }
+
+  async deleteComments(name: string): Promise<void> {
+    await this.commentsModel.deleteMany().where("commenter").equals(name);
+  }
 }
