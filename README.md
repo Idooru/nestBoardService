@@ -71,3 +71,7 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](LICENSE).
+
+## 작성 시 유의 사항
+
+1. 서비스에서 id 혹은 이름 등을 필요로 한다면 src/lib/validator에 있는 ValidateExistForValue 클래스를 defendancy injection 후 사용 할 수 있도록 한다.

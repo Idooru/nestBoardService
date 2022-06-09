@@ -11,6 +11,7 @@ import { ImageSchema } from "./schemas/image.schema";
 import { CommentsSchema } from "../comments/schemas/comments.schema";
 import { CommentModule } from "../comments/comments.module";
 import { ValidatorModule } from "../../lib/validator/validator.module";
+import { ImageService } from "./service/image.service";
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import { ValidatorModule } from "../../lib/validator/validator.module";
     forwardRef(() => ValidatorModule),
   ],
   controllers: [BoardController],
-  providers: [BoardService, BoardRepository, ImageRepository],
-  exports: [BoardRepository, ImageRepository],
+  providers: [BoardService, BoardRepository, ImageRepository, ImageService],
+  exports: [BoardRepository],
 })
 export class BoardModule {}

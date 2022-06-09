@@ -29,9 +29,9 @@ export class UserController {
 
   @Post("/register")
   async register(
-    @Body() payload: UserRequestDto,
+    @Body() body: UserRequestDto,
   ): Promise<JSON<ReadOnlyUsersDto>> {
-    const result = await this.userService.register(payload);
+    const result = await this.userService.register(body);
 
     return {
       statusCode: 201,
@@ -42,16 +42,16 @@ export class UserController {
 
   @Post("/login")
   async login(
-    @Body() payload: LoginDto,
+    @Body() body: LoginDto,
     @Res() res: Response,
   ): Promise<JSON<string>> {
-    const jwtToken: string = await this.authService.login(payload);
+    const jwtToken: string = await this.authService.login(body);
 
     res.cookie("JWT_COOKIE", jwtToken, { httpOnly: true });
 
     return {
       statusCode: 201,
-      message: `${payload.email}계정으로 로그인에 성공하였습니다.`,
+      message: `${body.email}계정으로 로그인에 성공하였습니다.`,
       result: jwtToken,
     };
   }
@@ -100,11 +100,11 @@ export class UserController {
   @UseGuards(IsloginGuard)
   @Patch("/set-user")
   async setUser(
-    @Body() payload: UserRequestDto,
+    @Body() body: UserRequestDto,
     @GetDecodedJwt() user: JwtPayload,
     @Res() res: Response,
   ): Promise<JSON<string>> {
-    const result: string = await this.userService.setUser(payload, user);
+    const result: string = await this.userService.setUser(body, user);
 
     res.cookie("JWT_COOKIE", result, { httpOnly: true });
 

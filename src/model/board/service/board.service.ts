@@ -1,6 +1,5 @@
 import {
   Injectable,
-  BadRequestException,
   NotFoundException,
   UnauthorizedException,
 } from "@nestjs/common";
@@ -24,11 +23,11 @@ export class BoardService {
   ) {}
 
   async createBoard(
-    payload: BoardRequestDto,
+    body: BoardRequestDto,
     imgUrls: Array<ImageReturnDto>,
     user: JwtPayload,
   ): Promise<ReadOnlyBoardsDto> {
-    const { title, description, isPublic } = payload;
+    const { title, description, isPublic } = body;
     const author = user.name;
 
     const Urls = imgUrls.map((idx) => idx.url);
@@ -44,44 +43,6 @@ export class BoardService {
     const readOnlyBoard: ReadOnlyBoardsDto = board.readOnlyData;
 
     return readOnlyBoard;
-  }
-
-  async uploadImg(
-    files: Array<Express.Multer.File>,
-    user: JwtPayload,
-  ): Promise<ImageReturnDto[]> {
-    const imgUrls: ImageReturnDto[] = [];
-    const author = user.name;
-
-    if (!files.length) {
-      throw new BadRequestException(
-        "사진을 업로드 할 수 없습니다. 사진을 제시해주세요.",
-      );
-    } else if (files.length >= 2) {
-      for (const index of files) {
-        const fileName = index.filename;
-        const originalName = index.originalname;
-        imgUrls.push(
-          await this.imageRepository.uploadImg({
-            fileName,
-            author,
-            originalName,
-          }),
-        );
-      }
-    } else {
-      const fileName = files[0].filename;
-      const originalName = files[0].originalname;
-      imgUrls.push(
-        await this.imageRepository.uploadImg({
-          fileName,
-          author,
-          originalName,
-        }),
-      );
-    }
-
-    return imgUrls;
   }
 
   async findAllBoards(): Promise<ReadOnlyBoardsDto[]> {
@@ -146,13 +107,13 @@ export class BoardService {
 
   async updateBoard(
     id: string,
-    payload: BoardRequestDto,
+    body: BoardRequestDto,
     imgUrls: Array<ImageReturnDto>,
     user: JwtPayload,
   ): Promise<void> {
     await this.validateExist.isExistBoardId(id);
 
-    const { title, description, isPublic } = payload;
+    const { title, description, isPublic } = body;
     const author = user.name;
 
     const boards: Board[] = await this.boardRepository.findBoardsWithName(

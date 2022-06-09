@@ -3,9 +3,9 @@ import { CommentsService } from "../service/comment.service";
 import { IsloginGuard } from "../../../lib/guards/islogin.guard";
 import { GetDecodedJwt } from "src/lib/decorators/user.decorator";
 import { JwtPayload } from "../../auth/jwt/jwt-payload.interface";
-import { Types } from "mongoose";
 import { JSON } from "src/lib/interfaces/json.interface";
 import { ReadOnlyCommentsDto } from "../dto/read-only-comments.dto";
+import { Types } from "mongoose";
 
 @Controller("Comments")
 export class CommentsController {
@@ -26,13 +26,13 @@ export class CommentsController {
   @UseGuards(IsloginGuard)
   @Post("/:id/board")
   async createComment(
-    @Param("id") target_id: Types.ObjectId,
+    @Param("id") id: Types.ObjectId,
     @Body() payload: { content: string },
     @GetDecodedJwt() user: JwtPayload,
   ): Promise<JSON<ReadOnlyCommentsDto>> {
     const result: ReadOnlyCommentsDto = await this.commentService.createComment(
       payload,
-      target_id,
+      id,
       user,
     );
 

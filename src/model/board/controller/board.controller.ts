@@ -23,21 +23,25 @@ import { JSON } from "src/lib/interfaces/json.interface";
 import { GetImageCookies } from "src/lib/decorators/get-image-cookies.decorator";
 import { ImageReturnDto } from "../dto/image-return.dto";
 import { ReadOnlyBoardsDto } from "../dto/read-only-boards.dto";
+import { ImageService } from "../service/image.service";
 
 @Controller("board")
 export class BoardController {
-  constructor(private readonly boardService: BoardService) {}
+  constructor(
+    private readonly boardService: BoardService,
+    private readonly imageService: ImageService,
+  ) {}
 
   @UseGuards(IsloginGuard)
   @Post()
   async createBoard(
-    @Body() payload: BoardRequestDto,
+    @Body() body: BoardRequestDto,
     @GetDecodedJwt() user: JwtPayload,
     @GetImageCookies() imgUrls: Array<ImageReturnDto>,
     @Res() res: Response,
   ): Promise<JSON<ReadOnlyBoardsDto>> {
     const result: ReadOnlyBoardsDto = await this.boardService.createBoard(
-      payload,
+      body,
       imgUrls,
       user,
     );
@@ -53,7 +57,7 @@ export class BoardController {
 
   @UseGuards(IsloginGuard)
   @UseInterceptors(
-    FilesInterceptor("image", 10, new MulterOperation("image").apply()),
+    FilesInterceptor("image", 5, new MulterOperation("image").apply()),
   )
   @Post("/image")
   async uploadImgForBoard(
@@ -63,7 +67,7 @@ export class BoardController {
   ): Promise<JSON<ImageReturnDto[]>> {
     console.log(files);
 
-    const result: ImageReturnDto[] = await this.boardService.uploadImg(
+    const result: ImageReturnDto[] = await this.imageService.uploadImg(
       files,
       user,
     );
@@ -123,7 +127,7 @@ export class BoardController {
   async findMyBoards(
     @GetDecodedJwt() user: JwtPayload,
   ): Promise<JSON<ReadOnlyBoardsDto[]>> {
-    const name = user.name;
+    const { name } = user;
 
     const result: ReadOnlyBoardsDto[] = await this.boardService.findMyBoards(
       user,
@@ -141,11 +145,11 @@ export class BoardController {
   async updateBoard(
     @Param("id") id: string,
     @Res() res: Response,
-    @Body() payload: BoardRequestDto,
+    @Body() body: BoardRequestDto,
     @GetDecodedJwt() user: JwtPayload,
     @GetImageCookies() imgUrls: Array<ImageReturnDto>,
   ): Promise<JSON<void>> {
-    await this.boardService.updateBoard(id, payload, imgUrls, user);
+    await this.boardService.updateBoard(id, body, imgUrls, user);
 
     imgUrls.forEach((idx) => res.clearCookie(idx.name));
 
@@ -166,6 +170,20 @@ export class BoardController {
     return {
       statusCode: 200,
       message: `${id}에 해당하는 게시물을 삭제하였습니다.`,
+    };
+  }
+
+  @UseGuards(IsloginGuard)
+  @Delete("/image")
+  cancleUploadImage(
+    @GetImageCookies() imgUrls: Array<ImageReturnDto>,
+    @Res() res: Response,
+  ): JSON<void> {
+    imgUrls.forEach((idx) => res.clearCookie(idx.name));
+
+    return {
+      statusCode: 200,
+      message: "사진 업로드를 취소하였습니다.",
     };
   }
 }

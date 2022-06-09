@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory, SchemaOptions } from "@nestjs/mongoose";
 import { IsNotEmpty, IsString, MaxLength } from "class-validator";
-import { Document, Types } from "mongoose";
+import { Document } from "mongoose";
 
 const option: SchemaOptions = {
   timestamps: true,
@@ -35,7 +35,7 @@ export class User extends Document {
   password: string;
 
   readonly readOnlyData: {
-    id: Types.ObjectId;
+    id: string;
     email: string;
     name: string;
   };

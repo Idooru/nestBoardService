@@ -2,8 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Board } from "../schemas/board.schema";
 import { Model, Types } from "mongoose";
-import { BoardCreateDto } from "../dto/board-create.dto";
-import { BoardUpdateDto } from "../dto/board-update-dto";
+import { BoardCreateUpdateDto } from "../dto/board-create-update.dto";
 import { Comments } from "../../comments/schemas/comments.schema";
 
 @Injectable()
@@ -37,13 +36,13 @@ export class BoardRepository {
     return await this.boardModel.exists({ title });
   }
 
-  async create(board: BoardCreateDto): Promise<Board> {
+  async create(board: BoardCreateUpdateDto): Promise<Board> {
     return await this.boardModel.create(board);
   }
 
   async update(
     id: Types.ObjectId | string,
-    board: BoardUpdateDto,
+    board: BoardCreateUpdateDto,
   ): Promise<void> {
     await this.boardModel.updateOne({ _id: id }, board);
   }
@@ -52,7 +51,7 @@ export class BoardRepository {
     await this.boardModel.deleteOne({ _id: id });
   }
 
-  async deleteBoards(name: string): Promise<void> {
+  async deleteAllBoards(name: string): Promise<void> {
     await this.boardModel.deleteMany().where("author").equals(name);
   }
 }

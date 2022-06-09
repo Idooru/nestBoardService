@@ -1,16 +1,15 @@
-import { Injectable, ForbiddenException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { UserRequestDto } from "../dto/user-request.dto";
 import { UserRepository } from "../user.repository";
-import { JSON } from "src/lib/interfaces/json.interface";
 import { User } from "../schemas/user.schema";
 import { JwtPayload } from "../../auth/jwt/jwt-payload.interface";
 import { BoardRepository } from "../../board/repository/board.repository";
 import { ReadOnlyUsersDto } from "../dto/read-only-users.dto";
 import { AuthService } from "../../auth/auth.service";
-
-import * as bcrypt from "bcrypt";
 import { CommentRepository } from "../../comments/comments.repository";
 import { ValidateExistForValue } from "../../../lib/validator/validate-exist.provider";
+
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class UserService {
@@ -22,8 +21,8 @@ export class UserService {
     private readonly validateExist: ValidateExistForValue,
   ) {}
 
-  async register(payload: UserRequestDto): Promise<ReadOnlyUsersDto> {
-    const { email, name, password } = payload;
+  async register(body: UserRequestDto): Promise<ReadOnlyUsersDto> {
+    const { email, name, password } = body;
 
     await this.validateExist.isExistUserValue(email, name);
 
@@ -40,21 +39,21 @@ export class UserService {
     return readOnlyData;
   }
 
-  async setUser(payload: UserRequestDto, user: JwtPayload): Promise<string> {
+  async setUser(body: UserRequestDto, user: JwtPayload): Promise<string> {
     const { id } = user;
-    const { email, name } = payload;
+    const { email, name } = body;
 
     await this.validateExist.isExistUserValue(email, name);
 
-    const hashed = await bcrypt.hash(payload.password, 10);
+    const hashed = await bcrypt.hash(body.password, 10);
 
-    const changedPayload = {
+    const payload = {
       email,
       name,
       password: hashed,
     };
 
-    await this.userRepository.setUser(changedPayload, id);
+    await this.userRepository.setUser(payload, id);
 
     const dataToBeJwt: JwtPayload = { id, email, name };
 
@@ -70,7 +69,7 @@ export class UserService {
     const { name } = user;
 
     await this.userRepository.secession(id);
-    await this.boardRepository.deleteBoards(name);
+    await this.boardRepository.deleteAllBoards(name);
     await this.commentRepository.deleteComments(name);
   }
 }
