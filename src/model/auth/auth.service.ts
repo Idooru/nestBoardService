@@ -4,7 +4,6 @@ import { JwtService } from "@nestjs/jwt";
 import { LoginDto } from "./dto/login.dto";
 import { User } from "../user/schemas/user.schema";
 import { JwtPayload } from "./jwt/jwt-payload.interface";
-import { Types } from "mongoose";
 
 import * as bcrypt from "bcrypt";
 

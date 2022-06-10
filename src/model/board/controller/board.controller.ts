@@ -24,6 +24,7 @@ import { GetImageCookies } from "src/lib/decorators/get-image-cookies.decorator"
 import { ImageReturnDto } from "../dto/image-return.dto";
 import { ReadOnlyBoardsDto } from "../dto/read-only-boards.dto";
 import { ImageService } from "../service/image.service";
+import { cookieOption, maxNumberOfImage } from "src/lib/etc";
 
 @Controller("board")
 export class BoardController {
@@ -57,7 +58,11 @@ export class BoardController {
 
   @UseGuards(IsloginGuard)
   @UseInterceptors(
-    FilesInterceptor("image", 5, new MulterOperation("image").apply()),
+    FilesInterceptor(
+      "image",
+      maxNumberOfImage,
+      new MulterOperation("image").apply(),
+    ),
   )
   @Post("/image")
   async uploadImgForBoard(
@@ -73,7 +78,7 @@ export class BoardController {
     );
 
     result.forEach((idx: ImageReturnDto) =>
-      res.cookie(idx.name, idx.url, { httpOnly: true }),
+      res.cookie(idx.name, idx.url, cookieOption),
     );
 
     return {

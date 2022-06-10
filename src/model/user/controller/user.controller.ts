@@ -19,6 +19,7 @@ import { GetDecodedJwt } from "src/lib/decorators/user.decorator";
 import { JwtPayload } from "../../auth/jwt/jwt-payload.interface";
 import { ReadOnlyUsersDto } from "../dto/read-only-users.dto";
 import { UserInfo } from "src/lib/interfaces/user.info.interface";
+import { cookieOption } from "src/lib/etc";
 
 @Controller("/user")
 export class UserController {
@@ -47,7 +48,7 @@ export class UserController {
   ): Promise<JSON<string>> {
     const jwtToken: string = await this.authService.login(body);
 
-    res.cookie("JWT_COOKIE", jwtToken, { httpOnly: true });
+    res.cookie("JWT_COOKIE", jwtToken, cookieOption);
 
     return {
       statusCode: 201,
@@ -64,7 +65,7 @@ export class UserController {
   ): Promise<JSON<string>> {
     const jwtToken: string = await this.authService.refreshTokenWhenLogin(user);
 
-    res.cookie("JWT_COOKIE", jwtToken, { httpOnly: true });
+    res.cookie("JWT_COOKIE", jwtToken, cookieOption);
 
     return {
       statusCode: 200,
@@ -106,7 +107,7 @@ export class UserController {
   ): Promise<JSON<string>> {
     const jwtToken: string = await this.userService.setUser(body, user);
 
-    res.cookie("JWT_COOKIE", jwtToken, { httpOnly: true });
+    res.cookie("JWT_COOKIE", jwtToken, cookieOption);
 
     return {
       statusCode: 200,
