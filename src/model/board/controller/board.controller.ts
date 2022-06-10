@@ -65,7 +65,7 @@ export class BoardController {
     @GetDecodedJwt() user: JwtPayload,
     @Res() res: Response,
   ): Promise<JSON<ImageReturnDto[]>> {
-    console.log(files);
+    console.log("logging image info ->\n", files);
 
     const result: ImageReturnDto[] = await this.imageService.uploadImg(
       files,

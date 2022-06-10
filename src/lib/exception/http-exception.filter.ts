@@ -20,12 +20,15 @@ export class HttpExceptionFilter implements ExceptionFilter {
       `Response from ${req.method} ${req.originalUrl} :: error detected`,
     );
 
-    res.status(status).json({
-      error: {
-        statusCode: status,
-        timestamp: new Date().toString(),
-        ...error,
-      },
-    });
+    res
+      .status(status)
+      .setHeader("X-Powered-By", "")
+      .json({
+        error: {
+          statusCode: status,
+          timestamp: new Date().toString(),
+          ...error,
+        },
+      });
   }
 }

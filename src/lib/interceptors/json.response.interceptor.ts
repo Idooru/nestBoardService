@@ -25,7 +25,7 @@ export class JsonResponseInterceoptor implements NestInterceptor {
             Date.now() - now
           }ms`,
         );
-        res.status(data.statusCode).json(data);
+        res.setHeader("X-Powered-By", "").status(data.statusCode).json(data);
       }),
     );
   }

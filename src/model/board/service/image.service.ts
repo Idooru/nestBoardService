@@ -34,6 +34,7 @@ export class ImageService {
     } else {
       const fileName = files[0].filename;
       const originalName = files[0].originalname;
+
       imgUrls.push(
         await this.imageRepository.uploadImg({
           fileName,

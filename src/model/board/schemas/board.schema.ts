@@ -1,6 +1,13 @@
 import { SchemaOptions, Document, Types } from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { IsArray, IsBoolean, IsNotEmpty, IsString } from "class-validator";
+import {
+  IsArray,
+  IsBoolean,
+  IsNotEmpty,
+  IsString,
+  MaxLength,
+  MinLength,
+} from "class-validator";
 import { Comments } from "src/model/comments/schemas/comments.schema";
 
 const option: SchemaOptions = {
@@ -27,9 +34,10 @@ export class Board extends Document {
 
   @IsNotEmpty()
   @IsString()
+  @MaxLength(100)
+  @MinLength(3)
   @Prop({
     required: true,
-    length: 100,
   })
   description: string;
 
@@ -46,7 +54,7 @@ export class Board extends Document {
   })
   imageList: Array<string>;
 
-  readonly commentList: Comments[];
+  readonly comments_detail: Comments[];
 
   readonly readOnlyData: {
     id: Types.ObjectId;
@@ -55,7 +63,7 @@ export class Board extends Document {
     description: string;
     isPublic: boolean;
     imageList: Array<string>;
-    commentList: Comments[];
+    comments_detail: Comments[];
   };
 }
 
@@ -69,7 +77,7 @@ _BoardSchema.virtual("readOnlyData").get(function (this: Board) {
     description: this.description,
     isPublic: this.isPublic,
     imgUrl: this.imageList,
-    commentList: this.commentList,
+    comments_detail: this.comments_detail,
   };
 });
 

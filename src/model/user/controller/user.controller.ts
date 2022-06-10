@@ -104,14 +104,14 @@ export class UserController {
     @GetDecodedJwt() user: JwtPayload,
     @Res() res: Response,
   ): Promise<JSON<string>> {
-    const result: string = await this.userService.setUser(body, user);
+    const jwtToken: string = await this.userService.setUser(body, user);
 
-    res.cookie("JWT_COOKIE", result, { httpOnly: true });
+    res.cookie("JWT_COOKIE", jwtToken, { httpOnly: true });
 
     return {
       statusCode: 200,
       message: "사용자 정보를 수정하고 토큰을 재발급합니다.",
-      result,
+      result: jwtToken,
     };
   }
 

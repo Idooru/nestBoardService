@@ -3,9 +3,9 @@ import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
 import { HttpExceptionFilter } from "./lib/exception/http-exception.filter";
 import { NestExpressApplication } from "@nestjs/platform-express";
+import { join } from "path";
 
 import * as cookieParser from "cookie-parser";
-import * as path from "path";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -15,7 +15,7 @@ async function bootstrap() {
   app.useGlobalFilters(new HttpExceptionFilter());
   app.use(cookieParser());
 
-  app.useStaticAssets(path.join(__dirname, "../uploads/image"), {
+  app.useStaticAssets(join(__dirname, "../uploads/image"), {
     prefix: "/media",
   });
 
