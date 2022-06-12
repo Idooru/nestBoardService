@@ -9,7 +9,6 @@ import * as cookieParser from "cookie-parser";
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  const port = process.env.PORT;
 
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
@@ -19,8 +18,8 @@ async function bootstrap() {
     prefix: "/media",
   });
 
-  app.listen(port, () =>
-    console.log(`Server is running at http://localhost:${port}`),
+  app.listen(process.env.PORT, () =>
+    console.log(`Server is running at http://localhost:${process.env.PORT}`),
   );
 }
 
