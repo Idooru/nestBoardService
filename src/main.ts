@@ -25,3 +25,4 @@ async function bootstrap() {
 }
 
 bootstrap();
+// work on wsl ubuntu 22-04
