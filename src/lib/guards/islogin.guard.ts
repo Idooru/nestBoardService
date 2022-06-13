@@ -14,7 +14,7 @@ export class IsloginGuard implements CanActivate {
 
   public canActivate(context: ExecutionContext): boolean {
     const req = context.switchToHttp().getRequest();
-    const { JWT_COOKIE } = req.signedCookies;
+    const { JWT_COOKIE } = req.cookies;
 
     if (!JWT_COOKIE) {
       throw new UnauthorizedException(

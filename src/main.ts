@@ -12,7 +12,7 @@ async function bootstrap() {
 
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
-  app.use(cookieParser(process.env.COOKIE_SECRET));
+  app.use(cookieParser());
 
   app.useStaticAssets(join(__dirname, "../uploads/image"), {
     prefix: "/media",
