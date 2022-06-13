@@ -15,7 +15,7 @@ import { LoginDto } from "../../auth/dto/login.dto";
 import { UserRequestDto } from "../dto/user-request.dto";
 import { UserService } from "../service/user.service";
 import { IsloginGuard } from "../../../lib/guards/islogin.guard";
-import { GetDecodedJwt } from "src/lib/decorators/user.decorator";
+import { GetDecodedJwt } from "src/lib/decorators/get-decoded-jwt.decorator";
 import { JwtPayload } from "../../auth/jwt/jwt-payload.interface";
 import { ReadOnlyUsersDto } from "../dto/read-only-users.dto";
 import { UserInfo } from "src/lib/interfaces/user.info.interface";
@@ -53,7 +53,6 @@ export class UserController {
     return {
       statusCode: 201,
       message: `${body.email}계정으로 로그인에 성공하였습니다.`,
-      result: jwtToken,
     };
   }
 

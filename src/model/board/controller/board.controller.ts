@@ -15,7 +15,7 @@ import { BoardService } from "../service/board.service";
 import { BoardRequestDto } from "../dto/board-request.dto";
 import { Response } from "express";
 import { IsloginGuard } from "../../../lib/guards/islogin.guard";
-import { GetDecodedJwt } from "src/lib/decorators/user.decorator";
+import { GetDecodedJwt } from "src/lib/decorators/get-decoded-jwt.decorator";
 import { JwtPayload } from "../../auth/jwt/jwt-payload.interface";
 import { FilesInterceptor } from "@nestjs/platform-express";
 import { MulterOperation } from "src/lib/multer/multer-operation";

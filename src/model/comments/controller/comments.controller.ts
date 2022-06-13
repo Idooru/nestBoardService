@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
 import { CommentsService } from "../service/comment.service";
 import { IsloginGuard } from "../../../lib/guards/islogin.guard";
-import { GetDecodedJwt } from "src/lib/decorators/user.decorator";
+import { GetDecodedJwt } from "src/lib/decorators/get-decoded-jwt.decorator";
 import { JwtPayload } from "../../auth/jwt/jwt-payload.interface";
 import { JSON } from "src/lib/interfaces/json.interface";
 import { ReadOnlyCommentsDto } from "../dto/read-only-comments.dto";
